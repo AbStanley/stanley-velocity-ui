@@ -1,7 +1,5 @@
-
-import { Component, ChangeDetectionStrategy, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CdkVirtualScrollViewport, ScrollingModule } from '@angular/cdk/scrolling';
 import { UsersService, UserListItem } from '../../services/users.service';
 import { UsersListStateService } from '../../services/users-list-state.service';
 import { UserCardComponent } from '../user-card/user-card.component';
@@ -10,18 +8,19 @@ import { GroupingCriteria } from '../../models/user.model';
 @Component({
   selector: 'app-users-list',
   standalone: true,
-  imports: [CommonModule, ScrollingModule, UserCardComponent],
+  imports: [CommonModule, UserCardComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './users-list.component.html',
   styleUrl: './users-list.component.scss'
 })
-export class UsersListComponent implements OnInit {
+export class UsersListComponent implements OnInit, AfterViewInit, OnDestroy {
   usersService = inject(UsersService);
   stateService = inject(UsersListStateService);
 
-  @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
+  @ViewChild('sentinel') sentinel!: ElementRef;
+  private observer: IntersectionObserver | undefined;
 
-  // Use the flattened signal for the single virtual list
+  // Use the flattened signal for the list
   flattenedUsers = this.usersService.flattenedUsers;
   expandedUserIds = this.stateService.expandedUserIds;
 
@@ -33,20 +32,39 @@ export class UsersListComponent implements OnInit {
     this.usersService.fetchUsers();
   }
 
+  ngAfterViewInit() {
+    this.setupInfiniteScroll();
+  }
+
+  ngOnDestroy() {
+    this.observer?.disconnect();
+  }
+
+  setupInfiniteScroll() {
+    const options = {
+      root: null,
+      rootMargin: '200px',
+      threshold: 0.1
+    };
+
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !this.usersService.isLoading()) {
+          this.usersService.loadMore();
+        }
+      });
+    }, options);
+
+    if (this.sentinel) {
+      this.observer.observe(this.sentinel.nativeElement);
+    }
+  }
+
   setCriteria(criteria: GroupingCriteria) {
     this.usersService.setGroupingCriteria(criteria);
   }
 
   trackByFn(index: number, item: UserListItem): string {
     return item.id;
-  }
-
-  onScroll() {
-    const end = this.viewport.getRenderedRange().end;
-    const total = this.flattenedUsers().length;
-
-    if (end >= total - 5 && total > 0) {
-      this.usersService.loadMore();
-    }
   }
 }

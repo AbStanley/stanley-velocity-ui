@@ -7,6 +7,10 @@ import { User, UserGroup, GroupingCriteria, RandomUserResponse } from '../models
 export class UsersServiceStub {
     users = signal<User[]>([]);
     groupedUsers = signal<UserGroup[]>([]);
+
+    // Mock flattenedUsers as it's used directly by component now
+    flattenedUsers = signal<any[]>([]);
+
     isLoading = signal<boolean>(false);
     error = signal<string | null>(null);
     currentCriteria = signal<GroupingCriteria>('all');

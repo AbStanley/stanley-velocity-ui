@@ -55,11 +55,11 @@
     <!-- Content -->
     <div class="content post-loading" [class.hidden]="usersService.isLoading() && usersService.users().length === 0">
 
-        <!-- Single Virtual Scroll for EVERYTHING (Flat & Grouped) -->
-        <cdk-virtual-scroll-viewport itemSize="90" class="viewport" (scrolledIndexChange)="onScroll()">
+        <!-- Scroll Container -->
+        <div class="scroll-container" #scrollContainer>
 
-            <div *cdkVirtualFor="let item of flattenedUsers(); trackBy: trackByFn" class="virtual-item">
-
+            <div class="list-items-wrapper">
+                @for (item of flattenedUsers(); track trackByFn($index, item)) {
                 @switch (item.type) {
                 @case ('header') {
                 <div class="group-header-item">
@@ -70,21 +70,26 @@
                 </div>
                 }
                 @case ('user') {
-                <app-user-card [user]="$any(item).data" [expanded]="expandedUserIds().has($any(item).data.login.uuid)"
-                    (toggle)="toggleUser($any(item).data.login.uuid)">
-                </app-user-card>
+                <div class="user-card-wrapper">
+                    <app-user-card [user]="$any(item).data"
+                        [expanded]="expandedUserIds().has($any(item).data.login.uuid)"
+                        (toggle)="toggleUser($any(item).data.login.uuid)">
+                    </app-user-card>
+                </div>
                 }
                 }
-
+                }
             </div>
-        </cdk-virtual-scroll-viewport>
 
-        @if (usersService.isLoading() && usersService.users().length > 0) {
-        <div class="loading-more">
-            <div class="spinner-small"></div>
-            <span>Loading more users...</span>
+            <div #sentinel class="sentinel"></div>
+
+            @if (usersService.isLoading() && usersService.users().length > 0) {
+            <div class="loading-more">
+                <div class="spinner-small"></div>
+                <span>Loading more users...</span>
+            </div>
+            }
         </div>
-        }
 
     </div>
 </div>

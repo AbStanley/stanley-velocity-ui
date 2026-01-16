@@ -14,7 +14,7 @@ export type UserListItem =
 })
 export class UsersService {
     private readonly apiUrl = 'https://randomuser.me/api/';
-    private readonly USE_MOCK_DATA = true; // MY NOTE: THIS TOGGLE WILL BE MOVED TO ALLOW TO SEARCH WITHOUT CALLING THE API
+    private readonly USE_MOCK_DATA = false; // MY NOTE: THIS TOGGLE WILL BE MOVED TO ALLOW TO SEARCH WITHOUT CALLING THE API
     private readonly PAGE_SIZE = 15;
 
     // State Signals
