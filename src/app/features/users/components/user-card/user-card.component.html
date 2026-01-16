@@ -1,9 +1,31 @@
 <div class="user-card" (click)="onToggle()" [class.expanded]="expanded">
     <div class="user-summary">
-        <img [src]="user.picture.thumbnail" [alt]="user.name.first" class="user-avatar" loading="lazy">
-        <div class="user-info">
-            <h3 class="name">{{ user.name.first }} {{ user.name.last }}</h3>
-            <p class="email">{{ user.email }}</p>
+        <div class="col-user">
+            <img [src]="user.picture.thumbnail" [alt]="user.name.first" class="user-avatar" loading="lazy">
+            <div class="user-info">
+                <h3 class="name">{{ user.name.first }} {{ user.name.last }}</h3>
+                <p class="email">{{ user.email }}</p>
+            </div>
+        </div>
+        <div class="col-contact">
+            <div class="contact-item">
+                <span class="label">Phone</span>
+                <span class="value">{{ user.phone }}</span>
+            </div>
+            <div class="contact-item">
+                <span class="label">Cell</span>
+                <span class="value">{{ user.cell }}</span>
+            </div>
+        </div>
+        <div class="col-details">
+            <div class="detail-item">
+                <span class="label">Nationality</span>
+                <span class="value">{{ user.nat }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="label">Location</span>
+                <span class="value">{{ user.location.city }}, {{ user.location.country }}</span>
+            </div>
         </div>
         <div class="chevron">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -18,24 +40,44 @@
         <div class="details-content">
             <div class="detail-grid">
                 <div class="detail-item">
-                    <span class="label">Phone</span>
-                    <span class="value">{{ user.phone }}</span>
+                    <span class="label">Date of Birth</span>
+                    <span class="value">{{ user.dob.date | date:'mediumDate' }} ({{ user.dob.age }} years)</span>
                 </div>
                 <div class="detail-item">
-                    <span class="label">Cell</span>
-                    <span class="value">{{ user.cell }}</span>
+                    <span class="label">Gender</span>
+                    <span class="value">{{ user.gender | titlecase }}</span>
                 </div>
                 <div class="detail-item">
-                    <span class="label">Nationality</span>
-                    <span class="value">{{ user.nat }}</span>
+                    <span class="label">Username</span>
+                    <span class="value">{{ user.login.username }}</span>
                 </div>
                 <div class="detail-item">
-                    <span class="label">Location</span>
-                    <span class="value">{{ user.location.city }}, {{ user.location.country }}</span>
+                    <span class="label">ID</span>
+                    <span class="value">{{ user.id.value || 'N/A' }}</span>
                 </div>
                 <div class="detail-item">
                     <span class="label">Registered</span>
                     <span class="value">{{ user.registered.date | date:'mediumDate' }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Member Since</span>
+                    <span class="value">{{ user.registered.age }} years ago</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Address</span>
+                    <span class="value">{{ user.location.street.number }} {{ user.location.street.name }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">City, State</span>
+                    <span class="value">{{ user.location.city }}, {{ user.location.state }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Postcode</span>
+                    <span class="value">{{ user.location.postcode }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Timezone</span>
+                    <span class="value">{{ user.location.timezone.description }}</span>
                 </div>
             </div>
         </div>

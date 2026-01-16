@@ -117,7 +117,7 @@ $border-radius-xl: 16px;
 
     .list-header {
         display: grid;
-        grid-template-columns: 80px 1fr 1fr;
+        grid-template-columns: minmax(200px, 1fr) minmax(150px, 1fr) minmax(150px, 1fr) auto;
         padding: $spacing-md $spacing-xl;
         background: $bg-header;
         border-bottom: 1px solid $border-mid;
@@ -126,9 +126,18 @@ $border-radius-xl: 16px;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.05em;
+    }
 
-        .col-user {
-            padding-left: 64px;
+    @media (max-width: 768px) {
+        .list-header {
+            grid-template-columns: 1fr auto;
+            gap: 8px;
+            padding: $spacing-md $spacing-lg;
+
+            .col-contact,
+            .col-details {
+                display: none;
+            }
         }
     }
 
@@ -174,7 +183,7 @@ $border-radius-xl: 16px;
 .group-header-item {
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 20;
 
     background-color: $bg-page;
 
