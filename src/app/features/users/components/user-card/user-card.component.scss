@@ -1,29 +1,31 @@
+@import '../../../../../styles/ease/ease-import.scss';
+
 :host {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: $spacing-s;
 }
 
 .user-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background: $color-white;
+  border-radius: $border-size-m;
+  @include shadow(s);
   cursor: pointer;
   overflow: hidden;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(0, 0, 0, 0.08);
 
   &:hover {
-    background-color: #f8fafc;
-    border-color: #cbd5e1;
+    background-color: $color-smoke;
+    border-color: $color-dust;
   }
 
   &.expanded {
-    background-color: #f0f9ff;
-    border-color: #3b82f6;
+    background-color: $color-ice;
+    border-color: $color-blue-700;
     box-shadow: none;
   }
 
-  @media (max-width: 768px) {
+  @include media-breakpoint-down(s) {
     &.expanded {
       overflow: visible;
     }
@@ -34,23 +36,23 @@
   display: grid;
   grid-template-columns: minmax(200px, 1fr) minmax(150px, 1fr) minmax(150px, 1fr) auto;
   align-items: center;
-  padding: 12px 16px;
-  gap: 16px;
+  padding: $spacing-m $spacing-l;
+  gap: $spacing-l;
 }
 
 .col-user {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: $spacing-m;
   min-width: 0;
 }
 
-@media (max-width: 768px) {
+@include media-breakpoint-down(s) {
   .user-summary {
     grid-template-columns: 1fr auto;
     grid-template-rows: auto auto;
-    gap: 8px;
-    padding: 12px;
+    gap: $spacing-s;
+    padding: $spacing-m;
   }
 
   .col-user {
@@ -79,22 +81,22 @@
     position: sticky;
     top: 0px;
     z-index: 10;
-    background-color: #f0f9ff;
+    background-color: $color-ice;
     border-bottom: none;
-    border-radius: 12px 12px 12px 12px;
-    margin: 8px 0x 0 0;
+    border-radius: $border-size-m $border-size-m $border-size-m $border-size-m;
+    margin: $spacing-s 0 0 0;
   }
 
   .details-content {
-  padding: 16px;
-  min-height: 0;
-  border-radius: 0 0 12px 12px;
-}
+    padding: $spacing-l;
+    min-height: 0;
+    border-radius: 0 0 $border-size-m $border-size-m;
+  }
 
-.user-details {
-  border-radius: 0 0 12px 12px;
+  .user-details {
+    border-radius: 0 0 $border-size-m $border-size-m;
 
-}
+  }
 }
 
 .user-avatar {
@@ -102,7 +104,7 @@
   height: 48px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #fff;
+  border: 2px solid $color-white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
 }
@@ -113,8 +115,8 @@
   .name {
     margin: 0;
     font-size: 1.1rem;
-    font-weight: 600;
-    color: #333;
+    font-weight: $font-weight-semi;
+    color: $color-night;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -123,7 +125,7 @@
   .email {
     margin: 4px 0 0;
     font-size: 0.9rem;
-    color: #666;
+    color: $color-steel;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -145,14 +147,14 @@
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #888;
+    color: $color-light-steel;
     margin-bottom: 2px;
   }
 
   .value {
     font-size: 0.9rem;
-    color: #333;
-    font-weight: 500;
+    color: $color-night;
+    font-weight: $font-weight-normal;
   }
 }
 
@@ -171,19 +173,19 @@
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #888;
+    color: $color-light-steel;
     margin-bottom: 2px;
   }
 
   .value {
     font-size: 0.9rem;
-    color: #333;
-    font-weight: 500;
+    color: $color-night;
+    font-weight: $font-weight-normal;
   }
 }
 
 .chevron {
-  color: #999;
+  color: $color-light-steel;
   transition: transform 0.3s ease;
 
   svg {
@@ -197,15 +199,15 @@
 }
 
 .user-details {
-  background-color: #fafafa;
+  background-color: $color-smoke; // #fafafa
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   opacity: 0;
 
-  @media (max-width: 768px) {
-    background-color: white;
+  @include media-breakpoint-down(s) {
+    background-color: $color-white;
   }
 }
 
@@ -215,7 +217,7 @@
 }
 
 .details-content {
-  padding: 16px;
+  padding: $spacing-l;
   min-height: 0;
   border-top: none;
 }
@@ -223,7 +225,7 @@
 .detail-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
+  gap: $spacing-l;
 }
 
 .user-details .detail-item {
@@ -234,13 +236,13 @@
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #888;
+    color: $color-light-steel;
     margin-bottom: 4px;
   }
 
   .value {
     font-size: 0.95rem;
-    color: #333;
-    font-weight: 500;
+    color: $color-night;
+    font-weight: $font-weight-normal;
   }
 }
