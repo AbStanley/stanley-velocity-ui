@@ -65,6 +65,50 @@ $border-radius-xl: 16px;
             align-items: center;
             gap: $spacing-md;
 
+            .search-box {
+                position: relative;
+                display: flex;
+                align-items: center;
+
+                input {
+                    padding: 8px 12px;
+                    padding-right: 32px;
+                    border: 1px solid $border-mid;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    width: 200px;
+                    transition: all 0.2s;
+
+                    &:focus {
+                        outline: none;
+                        border-color: $primary-border;
+                        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                    }
+                }
+
+                .clear-search {
+                    position: absolute;
+                    right: 8px;
+                    background: none;
+                    border: none;
+                    color: #94a3b8;
+                    cursor: pointer;
+                    font-size: 16px;
+                    padding: 0;
+                    width: 20px;
+                    height: 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 50%;
+
+                    &:hover {
+                        background-color: $bg-control;
+                        color: $text-secondary;
+                    }
+                }
+            }
+
             .label {
                 font-size: 0.9rem;
                 font-weight: 500;

@@ -84,4 +84,38 @@ describe('UsersService', () => {
             expect(service.users().length).toBe(15);
         });
     });
+    describe('Search and Filtering', () => {
+        const mockUsers: any[] = [
+            { name: { first: 'John', last: 'Doe' }, email: 'john@example.com', login: { uuid: '1' } },
+            { name: { first: 'Jane', last: 'Smith' }, email: 'jane@test.com', login: { uuid: '2' } },
+            { name: { first: 'Bob', last: 'Jones' }, email: 'bob@example.com', login: { uuid: '3' } }
+        ];
+
+        beforeEach(() => {
+            // Manually set users directly for testing filtering logic without HTTP
+            (service as any).usersSignal.set(mockUsers);
+        });
+
+        it('should filter users by name', () => {
+            service.setSearchQuery('John');
+            expect(service.filteredUsers().length).toBe(1);
+            expect(service.filteredUsers()[0].name.first).toBe('John');
+        });
+
+        it('should filter users by email', () => {
+            service.setSearchQuery('test.com');
+            expect(service.filteredUsers().length).toBe(1);
+            expect(service.filteredUsers()[0].email).toBe('jane@test.com');
+        });
+
+        it('should return all users if query is empty', () => {
+            service.setSearchQuery('');
+            expect(service.filteredUsers().length).toBe(3);
+        });
+
+        it('should is case insensitive', () => {
+            service.setSearchQuery('JOHN');
+            expect(service.filteredUsers().length).toBe(1);
+        });
+    });
 });

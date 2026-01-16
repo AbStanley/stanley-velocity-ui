@@ -24,6 +24,7 @@ export class UsersService {
     private isLoadingSignal = signal<boolean>(false);
     private errorSignal = signal<string | null>(null);
     private currentPageSignal = signal<number>(1);
+    private searchQuerySignal = signal<string>('');
 
     // Read-only Exposed Signals
     readonly users = this.usersSignal.asReadonly();
@@ -31,14 +32,30 @@ export class UsersService {
     readonly isLoading = this.isLoadingSignal.asReadonly();
     readonly error = this.errorSignal.asReadonly();
     readonly currentCriteria = this.groupingCriteriaSignal.asReadonly();
+    readonly searchQuery = this.searchQuerySignal.asReadonly();
 
-    // Computed Signal for Virtual Scroll
+    // Computed Signal for Filtering
+    readonly filteredUsers = computed<User[]>(() => {
+        const query = this.searchQuerySignal().toLowerCase().trim();
+        const users = this.usersSignal();
+
+        if (!query) {
+            return users;
+        }
+
+        return users.filter(user => {
+            const fullName = `${user.name.first} ${user.name.last}`.toLowerCase();
+            return fullName.includes(query) || user.email.toLowerCase().includes(query);
+        });
+    });
+
+    // Computed Signal for Flattened List (Virtual Scroll)
     readonly flattenedUsers = computed<UserListItem[]>(() => {
         const criteria = this.groupingCriteriaSignal();
 
-        // If no grouping, just return users wrapped in items
+        // If no grouping, just return filtered users wrapped in items
         if (criteria === 'all') {
-            return this.usersSignal().map(user => ({
+            return this.filteredUsers().map(user => ({
                 type: 'user',
                 id: user.login.uuid,
                 data: user
@@ -89,6 +106,21 @@ export class UsersService {
             }
         } else {
             console.warn('Web Workers are not supported in this environment.');
+        }
+    }
+
+    private runWorker(users: User[], criteria: GroupingCriteria) {
+        if (users.length === 0) {
+            this.groupedUsersSignal.set([]);
+            return;
+        }
+
+        this.isLoadingSignal.set(true);
+        if (this.worker) {
+            this.worker.postMessage({ users, criteria });
+        } else {
+            console.error('Worker not initialized');
+            this.isLoadingSignal.set(false);
         }
     }
 
@@ -153,7 +185,7 @@ export class UsersService {
     setGroupingCriteria(criteria: GroupingCriteria): void {
         this.groupingCriteriaSignal.set(criteria);
 
-        const currentUsers = this.usersSignal();
+        const currentUsers = this.filteredUsers(); // Use filtered users!
         if (currentUsers.length === 0) {
             this.isLoadingSignal.set(false);
             return;
@@ -165,14 +197,12 @@ export class UsersService {
             return;
         }
 
-        this.isLoadingSignal.set(true); // Show loading while grouping
+        this.runWorker(currentUsers, criteria);
+    }
 
-        if (this.worker) {
-            this.worker.postMessage({ users: currentUsers, criteria });
-        } else {
-            console.error('Worker not initialized');
-            this.isLoadingSignal.set(false);
-        }
+    setSearchQuery(query: string): void {
+        this.searchQuerySignal.set(query);
+        this.setGroupingCriteria(this.groupingCriteriaSignal());
     }
 
 }

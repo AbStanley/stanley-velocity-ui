@@ -64,6 +64,11 @@ export class UsersListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.usersService.setGroupingCriteria(criteria);
   }
 
+  onSearch(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.usersService.setSearchQuery(input.value);
+  }
+
   trackByFn(index: number, item: UserListItem): string {
     return item.id;
   }

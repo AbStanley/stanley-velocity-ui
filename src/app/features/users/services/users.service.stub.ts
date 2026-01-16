@@ -14,6 +14,10 @@ export class UsersServiceStub {
     isLoading = signal<boolean>(false);
     error = signal<string | null>(null);
     currentCriteria = signal<GroupingCriteria>('all');
+    searchQuery = signal<string>('');
+
+    // Mock filteredUsers
+    filteredUsers = signal<User[]>([]);
 
     async fetchUsers(force = false) {
         if (!force && this.users().length > 0) return;
@@ -26,6 +30,7 @@ export class UsersServiceStub {
             }
             const data: RandomUserResponse = await response.json();
             this.users.set(data.results);
+            this.filteredUsers.set(data.results); // Initialize filteredUsers
             this.setGroupingCriteria('all');
         } catch (err) {
             console.error(err);
@@ -39,10 +44,14 @@ export class UsersServiceStub {
         this.currentCriteria.set(criteria);
         // Basic grouping for test purposes
         if (criteria === 'all') {
-            this.groupedUsers.set([{ name: 'All Users', users: this.users() }]);
+            this.groupedUsers.set([{ name: 'All Users', users: this.filteredUsers() }]);
         } else {
             // Simplified grouping for tests
-            this.groupedUsers.set([{ name: 'Test Group', users: this.users() }]);
+            this.groupedUsers.set([{ name: 'Test Group', users: this.filteredUsers() }]);
         }
+    }
+
+    setSearchQuery(query: string) {
+        this.searchQuery.set(query);
     }
 }

@@ -2,6 +2,14 @@
     <!-- Toolbar / Controls -->
     <div class="toolbar">
         <div class="grouping-controls">
+            <div class="search-box">
+                <input type="text" placeholder="Search users..." [value]="usersService.searchQuery()"
+                    (input)="onSearch($event)">
+                @if (usersService.searchQuery()) {
+                <button class="clear-search" (click)="usersService.setSearchQuery('')">x</button>
+                }
+            </div>
+
             <span class="label">Group by</span>
             <div class="segment-control">
                 <button [class.active]="usersService.currentCriteria() === 'all'"
