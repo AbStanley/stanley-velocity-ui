@@ -1,8 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 @use 'ease/ease-styles';
 
+html,
 body {
     margin: 0;
+    height: 100%;
+    /* Critical for Virtual Scroll */
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
