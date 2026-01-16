@@ -229,6 +229,7 @@ $border-radius-xl: 16px;
     height: 100%;
     overflow-y: auto;
     padding: 0 $spacing-xl;
+    scrollbar-gutter: stable;
 
     &::-webkit-scrollbar {
         width: 8px;
@@ -243,6 +244,10 @@ $border-radius-xl: 16px;
         border-radius: 4px;
         border: 2px solid $bg-page;
     }
+
+    @media (max-width: 768px) {
+        padding: 0 $spacing-md;
+    }
 }
 
 .list-items-wrapper {
@@ -256,10 +261,6 @@ $border-radius-xl: 16px;
 
 .user-card-wrapper {
     width: 100%;
-
-    @media (max-width: 768px) {
-        padding: 0 $spacing-md;
-    }
 }
 
 .group-header-item {
