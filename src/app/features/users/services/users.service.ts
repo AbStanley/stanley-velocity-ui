@@ -1,5 +1,5 @@
 
-import { Injectable, signal, computed, effect } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { User, UserGroup, GroupingCriteria, RandomUserResponse } from '../models/user.model';
 import { catchError, map, of, tap } from 'rxjs';
@@ -7,6 +7,15 @@ import { catchError, map, of, tap } from 'rxjs';
 export type UserListItem =
     | { type: 'header'; id: string; label: string; count: number }
     | { type: 'user'; id: string; data: User };
+
+// Type Guards for UserListItem
+export function isHeaderItem(item: UserListItem): item is { type: 'header'; id: string; label: string; count: number } {
+    return item.type === 'header';
+}
+
+export function isUserItem(item: UserListItem): item is { type: 'user'; id: string; data: User } {
+    return item.type === 'user';
+}
 
 @Injectable({
     providedIn: 'root',
@@ -33,6 +42,8 @@ export class UsersService {
     readonly searchQuery = this.searchQuerySignal.asReadonly();
 
     // Computed Signal for Filtering
+    // Note: For very large datasets (10000+), consider adding debounce via toObservable/debounceTime/toSignal
+    // This was attempted but adds test complexity. See FEATURE_DOCUMENTATION.md for details.
     readonly filteredUsers = computed<User[]>(() => {
         const query = this.searchQuerySignal().toLowerCase().trim();
         const users = this.usersSignal();

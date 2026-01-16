@@ -64,27 +64,27 @@
     <div class="content post-loading" [class.hidden]="usersService.isLoading() && usersService.users().length === 0">
 
         <!-- Virtual Scroll Container -->
-        <cdk-virtual-scroll-viewport class="scroll-container custom-scrollbar">
+        <cdk-virtual-scroll-viewport class="scroll-container custom-scrollbar" appScrollNearBottom
+            (nearBottom)="onScrollNearBottom()">
 
-            <div *cdkVirtualFor="let item of flattenedUsers(); trackBy: trackByFn" class="virtual-item"
-                [style.height.px]="item.type === 'header' ? 50 : (isMobile() ? 180 : 120)">
-                @switch (item.type) {
-                @case ('header') {
+            <div *cdkVirtualFor="let item of flattenedUsers(); trackBy: trackByFn; let i = index" class="virtual-item"
+                [style.height.px]="item.type === 'header' ? UI.HEADER_HEIGHT : (isMobile() ? UI.ITEM_HEIGHT_MOBILE : UI.ITEM_HEIGHT_DESKTOP)">
+
+                @if (isHeader(item)) {
                 <div class="group-header-item">
                     <div class="header-content">
-                        <span class="header-title">{{ $any(item).label }}</span>
-                        <span class="global-badge">{{ $any(item).count }}</span>
+                        <span class="header-title">{{ item.label }}</span>
+                        <span class="global-badge">{{ item.count }}</span>
                     </div>
                 </div>
                 }
-                @case ('user') {
+
+                @if (isUser(item)) {
                 <div class="user-card-wrapper">
-                    <app-user-card [user]="$any(item).data"
-                        [expanded]="expandedUserIds().has($any(item).data.login.uuid)"
-                        (toggle)="toggleUser($any(item).data.login.uuid)">
+                    <app-user-card [user]="item.data" [expanded]="expandedUserIds().has(item.data.login.uuid)"
+                        (toggle)="toggleUser(item.data.login.uuid)">
                     </app-user-card>
                 </div>
-                }
                 }
             </div>
 

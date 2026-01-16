@@ -118,6 +118,48 @@ This keeps memory usage low and rendering fast, while still giving the illusion 
 
 ---
 
+## 5.1. Card Expansion Strategy & Trade-offs
+
+Expanding user cards to show additional details within a virtual scroll context presents a particular challenge: **virtual scroll requires a fixed item height**, but in this case, the expandable content has variable heights.
+
+### My chosen approach: Expansion with overlay
+
+The current implementation uses an **absolute positioning** for expanded details, so when a card is expanded, the details panel appears as an overlay below the card, without affecting the scroll layout and keeping the scroll position stable for the user.
+
+I detailed the trade-offs in the table below:
+
+| Pros | Cons |
+|------|------|
+| No layout shifts or scroll jumping | Expanded content overlaps the next item |
+| Smooth and predictable scroll behavior | Feels like a "dropdown" rather than inline expansion |
+| Simple implementation, easy to maintain | Requires z-index management |
+| Works perfectly with virtual scroll | |
+
+### Alternative Approaches Considered
+
+On personal opinion: For a potential inmense list, a better approach to show the info in another way, either (modal, drawer, etc) would be a better option.
+
+If we follow the same path, given more time, the following alternatives could be explored:
+
+#### 1. Fixed Expansion Height (Accordion Pattern)
+Only one card is expanded at a time, and the strategy allocates a fixed additional height for the expanded area.
+
+But the biggest const is that the fixed height may clip content or waste space.
+
+#### 2. Experimental CDK Autosize
+Angular CDK has an experimental autosize virtual scroll strategy that measures rendered item heights dynamically, but it is experimental and may be unstable.
+
+#### 3. Modal/Drawer Pattern
+Instead of inline expansion, clicking a card opens a side drawer or modal with the details.
+
+that's what Google does with these scenarios, and it works well, but it needs extra clicks to close the modal/drawer and sends the user out of the list context. (A good trade-off for a better user experience, imo)
+
+### Why Overlay Was Chosen
+
+Given the challenge's time constraints and I consider a priority the smooth scrolling performance, the overlay approach was chosen as the pragmatic choice. It delivers a functional, performant user experience without introducing experimental dependencies or complex height calculations.
+
+---
+
 ## 6. Client-Side Search
 
 Because the dataset is already available locally (either fully or in large chunks), search is handled entirely on the client. 
@@ -137,6 +179,18 @@ but since part of the criteria on the coding challenge has been to work with the
 * Any change to the query automatically updates the visible results
 
 This keeps search fast, simple, and easy to reason about.
+
+### Future Optimization: Debounced Filtering
+
+For super large datasets (5,000+ users), running the filter on every keystroke could cause UI jitter on devices. There was an optimization that would have served the pourpose, but it adds test complexity (`toSignal`/`toObservable` require injection context). Given the current dataset size (~5000 users) and the performance of computed signals, the synchronous approach was sort of acceptable for this challenge.
+
+```typescript
+// Using Angular's rxjs (sort of overkill)
+private readonly debouncedSearchQuery = toSignal(
+    toObservable(this.searchQuerySignal).pipe(debounceTime(300)),
+    { initialValue: '' }
+);
+```
 
 ---
 

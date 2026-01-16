@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { UsersService } from './features/users/services/users.service';
-import { UsersServiceStub } from './features/users/services/users.service.stub'
+import { UsersServiceStub } from '../testing/stubs';
 
 describe('AppComponent', () => {
   beforeEach(async () => {

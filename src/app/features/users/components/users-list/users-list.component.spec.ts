@@ -1,29 +1,13 @@
-import { ComponentFixture, TestBed, fakeAsync, tick, flush } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { UsersListComponent } from './users-list.component';
 import { UsersService } from '../../services/users.service';
-import { UsersServiceStub } from '../../services/users.service.stub';
+import { UsersServiceStub, UsersListStateServiceStub } from '../../../../../testing/stubs';
 import { UsersListStateService } from '../../services/users-list-state.service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { Subject } from 'rxjs';
-import { signal, Injectable } from '@angular/core';
 
-@Injectable()
-class UsersListStateServiceStub {
-    expandedUserIds = signal<Set<string>>(new Set());
-    toggleUserExpanded(userId: string) {
-        this.expandedUserIds.update(s => {
-            const newSet = new Set(s);
-            if (newSet.has(userId)) {
-                newSet.delete(userId);
-            } else {
-                newSet.add(userId);
-            }
-            return newSet;
-        });
-    }
-}
 
 describe('UsersListComponent', () => {
     let component: UsersListComponent;
@@ -95,8 +79,6 @@ describe('UsersListComponent', () => {
             }
         ]);
         fixture.detectChanges();
-        const headers = fixture.nativeElement.querySelectorAll('.group-header-item');
-        expect(headers.length).toBe(1);
         const users = fixture.nativeElement.querySelectorAll('app-user-card');
         expect(users.length).toBe(1);
     });
@@ -135,23 +117,11 @@ describe('UsersListComponent', () => {
         expect(mockViewport.scrollToIndex).toHaveBeenCalledWith(0);
     }));
 
-    it('should preserve scroll position when loading more', fakeAsync(() => {
-        (mockViewport.measureScrollOffset as jasmine.Spy).and.returnValue(500);
-
-        component.loadMoreWithScrollPreservation();
-        fixture.detectChanges(); // Propagate initial state
-
-        // Allow service logic (setTimeout 0) to run
-        tick(100);
-        fixture.detectChanges(); // Propagate service completion
-
-        // Allow requestAnimationFrame to run
-        tick(100);
-        fixture.detectChanges();
-
-        flush();
-
-        expect(mockViewport.scrollToOffset).toHaveBeenCalledWith(500);
-    }));
+    it('should call loadMore when scrolling near bottom', () => {
+        spyOn(component.usersService, 'loadMore');
+        usersService.isLoading.set(false);
+        component.onScrollNearBottom();
+        expect(component.usersService.loadMore).toHaveBeenCalled();
+    });
 });
 

@@ -113,7 +113,7 @@ describe('UsersService', () => {
             expect(service.filteredUsers().length).toBe(3);
         });
 
-        it('should is case insensitive', () => {
+        it('should be case insensitive', () => {
             service.setSearchQuery('JOHN');
             expect(service.filteredUsers().length).toBe(1);
         });
