@@ -63,10 +63,11 @@
     grid-row: 1;
   }
 
-  .chevron {
+  .global-chevron {
     grid-column: 2;
     grid-row: 1;
   }
+
 
   .col-contact,
   .col-details {
@@ -120,71 +121,16 @@
   }
 }
 
-.col-contact {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.contact-item {
-  display: flex;
-  flex-direction: column;
-  font-size: 0.85rem;
-
-  .label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: $color-light-steel;
-    margin-bottom: 2px;
-  }
-
-  .value {
-    font-size: 0.9rem;
-    color: $color-night;
-    font-weight: $font-weight-normal;
-  }
-}
-
+.col-contact,
 .col-details {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.detail-item {
-  display: flex;
-  flex-direction: column;
-  font-size: 0.85rem;
 
-  .label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: $color-light-steel;
-    margin-bottom: 2px;
-  }
 
-  .value {
-    font-size: 0.9rem;
-    color: $color-night;
-    font-weight: $font-weight-normal;
-  }
-}
 
-.chevron {
-  color: $color-light-steel;
-  transition: transform 0.3s ease;
-
-  svg {
-    display: block;
-    transition: transform 0.3s ease;
-  }
-
-  .rotated {
-    transform: rotate(180deg);
-  }
-}
 
 .user-details {
   position: absolute;
@@ -246,24 +192,5 @@
   @include media-breakpoint-down(s) {
     grid-template-columns: 1fr 1fr;
     gap: $spacing-m;
-  }
-}
-
-.user-details .detail-item {
-  display: flex;
-  flex-direction: column;
-
-  .label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: $color-light-steel;
-    margin-bottom: 4px;
-  }
-
-  .value {
-    font-size: 0.95rem;
-    color: $color-night;
-    font-weight: $font-weight-normal;
   }
 }
