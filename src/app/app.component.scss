@@ -1,4 +1,8 @@
 :host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
   header {
     height: 200px;
     text-align: center;
@@ -6,5 +10,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-shrink: 0;
+    /* Prevent header from shrinking */
+  }
+
+  app-users-list {
+    flex: 1;
+    overflow: hidden;
   }
 }
