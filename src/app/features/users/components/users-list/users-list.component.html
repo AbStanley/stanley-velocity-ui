@@ -56,7 +56,7 @@
     <div class="content post-loading" [class.hidden]="usersService.isLoading() && usersService.users().length === 0">
 
         <!-- Single Virtual Scroll for EVERYTHING (Flat & Grouped) -->
-        <cdk-virtual-scroll-viewport itemSize="88" class="viewport" (scrolledIndexChange)="onScroll()">
+        <cdk-virtual-scroll-viewport itemSize="90" class="viewport" (scrolledIndexChange)="onScroll()">
 
             <div *cdkVirtualFor="let item of flattenedUsers(); trackBy: trackByFn" class="virtual-item">
 

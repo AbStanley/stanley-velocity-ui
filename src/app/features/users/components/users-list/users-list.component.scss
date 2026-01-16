@@ -1,3 +1,40 @@
+// Colors
+$white: #ffffff;
+$bg-page: #f8f9fa;
+$bg-header: #f8fafc;
+$bg-control: #f1f5f9;
+$bg-loading-overlay: rgba(255, 255, 255, 0.9);
+
+$border-light: #eef2f6;
+$border-mid: #e2e8f0;
+$border-dark: #e0e0e0;
+$border-transparent: rgba(0, 0, 0, 0.05);
+
+$text-primary: #1e293b;
+$text-secondary: #64748b;
+$text-active: #0f172a;
+
+$primary-color: #2563eb;
+$primary-light: #dbeafe;
+$primary-border: #3b82f6;
+
+$danger-color: #ef4444;
+$danger-bg: #fee2e2;
+$danger-hover: #dc2626;
+
+// Spacing
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 24px;
+
+// Layout
+$border-radius-sm: 6px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+$border-radius-xl: 16px;
+
 :host {
     display: block;
     height: 100%;
@@ -8,154 +45,294 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    background: #f8f9fa;
-}
+    background-color: $bg-page;
+    border-radius: $border-radius-xl;
+    overflow: hidden;
+    box-shadow: 0 4px 20px $border-transparent;
 
-.toolbar {
-    padding: 16px;
-    background: white;
-    border-bottom: 1px solid #e0e0e0;
-    display: flex;
-    flex-direction: column;
-    /* Mobile First: Stack vertically */
-    gap: 16px;
-    z-index: 10;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-
-    @media (min-width: 600px) {
-        flex-direction: row;
-        /* Desktop: Row */
+    .toolbar {
+        padding: $spacing-lg $spacing-xl;
+        background: $white;
+        border-bottom: 1px solid $border-light;
+        display: flex;
         justify-content: space-between;
         align-items: center;
-    }
-}
+        flex-wrap: wrap;
+        gap: $spacing-lg;
 
-.grouping-controls {
-    display: flex;
-    flex-direction: column;
-    /* Mobile: Stack label and buttons */
-    gap: 8px;
-    width: 100%;
+        .grouping-controls {
+            display: flex;
+            align-items: center;
+            gap: $spacing-md;
 
-    @media (min-width: 600px) {
-        flex-direction: row;
-        align-items: center;
-        width: auto;
-    }
+            .label {
+                font-size: 0.9rem;
+                font-weight: 500;
+                color: $text-secondary;
+            }
 
-    .label {
-        font-weight: 500;
-        color: #555;
-        font-size: 0.9rem;
-    }
-}
+            .segment-control {
+                background: $bg-control;
+                padding: $spacing-xs;
+                border-radius: $border-radius-md;
+                display: flex;
+                gap: 2px;
 
-.btn-group {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    /* Allow horizontal scroll on very small screens */
-    padding-bottom: 4px;
-    /* Space for scrollbar if needed */
-    -webkit-overflow-scrolling: touch;
+                button {
+                    background: transparent;
+                    border: none;
+                    padding: 6px $spacing-lg;
+                    border-radius: $border-radius-sm;
+                    color: $text-secondary;
+                    font-size: 0.9rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
 
-    button {
-        padding: 8px 16px;
-        /* Larger touch targets */
-        border: 1px solid #d0d0d0;
-        background: white;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 0.9rem;
-        transition: all 0.2s;
-        white-space: nowrap;
-        flex-shrink: 0;
+                    &:hover {
+                        color: $text-active;
+                    }
 
-        &:hover {
-            background: #f0f0f0;
-            border-color: #bbb;
+                    &.active {
+                        background: $white;
+                        color: $primary-color;
+                        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                        font-weight: 600;
+                    }
+                }
+            }
         }
 
-        &.active {
-            background: #333;
-            color: white;
-            border-color: #333;
+        .stats {
+            .user-count {
+                font-size: 0.9rem;
+                color: $text-secondary;
+                font-weight: 500;
+                background: $border-light;
+                padding: $spacing-xs $spacing-md;
+                border-radius: $border-radius-lg;
+            }
+        }
+    }
+
+    .list-header {
+        display: grid;
+        grid-template-columns: 80px 1fr 1fr;
+        padding: $spacing-md $spacing-xl;
+        background: $bg-header;
+        border-bottom: 1px solid $border-mid;
+        color: $text-secondary;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+
+        .col-user {
+            padding-left: 64px;
+        }
+    }
+
+    .content {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .viewport {
+        height: 100%;
+
+        .virtual-item {
+            height: 90px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            padding: 0 $spacing-xl;
+
+            margin: 0;
+
+            app-user-card {
+                width: 100%;
+                margin-bottom: 0 !important;
+                display: block;
+            }
         }
     }
 }
 
-.viewport {
-    height: 100%;
-    width: 100%;
-
-    /* Ensure the viewport takes available space */
-    .cdk-virtual-scroll-content-wrapper {
-        display: flex;
-        flex-direction: column;
-    }
-}
-
-.content {
-    flex: 1;
-    overflow: hidden;
-    height: 100%;
-    /* Important for virtual scroll to calculate height */
-}
-
-/* 
-   We treat headers as items in the virtual list.
-   They need a fixed height to match itemSize="80" 
-   (or we need to use a strategy for variable height, but let's stick to 80px for simplicity first, 
-   or just accept they are 80px tall like users).
-   If we want different heights, we need AutosizeStrategy which is heavier.
-   Let's try to make headers look good at 80px or whatever itemSize is.
-*/
 .group-header-item {
-    height: 80px;
-    /* Matches itemSize */
+    height: 100%;
+    box-sizing: border-box;
+    padding: 0 $spacing-lg;
     display: flex;
     align-items: center;
-    padding: 0 16px;
-    background: #f0f2f5;
-    color: #333;
-    font-weight: 700;
-    font-size: 1.1rem;
-    border-bottom: 1px solid #e0e0e0;
 
-    .header-count {
-        margin-left: 8px;
-        color: #666;
-        font-weight: 400;
-        font-size: 0.9rem;
+    .header-content {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+
+        .header-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: $text-primary;
+            letter-spacing: -0.02em;
+        }
+
+        .header-badge {
+            background: $primary-light;
+            color: $primary-color;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: $border-radius-lg;
+        }
+    }
+
+    &::after {
+        content: '';
+        display: block;
+        height: 1px;
+        flex: 1;
+        background: $border-mid;
+        margin-left: $spacing-lg;
+        margin-top: 0;
     }
 }
 
-.loading-state,
+// Skeleton Loading
+.loading-state {
+    padding: $spacing-xl;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+
+    .skeleton-card {
+        background: $white;
+        height: 80px;
+        border-radius: $border-radius-lg;
+        padding: $spacing-lg;
+        display: flex;
+        align-items: center;
+        gap: $spacing-lg;
+        border: 1px solid $border-transparent;
+
+        .skeleton-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: $border-mid;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        .skeleton-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-sm;
+
+            .skeleton-line {
+                height: 12px;
+                border-radius: $border-radius-sm;
+                background: $border-mid;
+                animation: pulse 1.5s infinite ease-in-out;
+
+                &.short {
+                    width: 30%;
+                }
+
+                &.long {
+                    width: 60%;
+                }
+            }
+        }
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.loading-more {
+    position: absolute;
+    bottom: $spacing-xl;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    background: $bg-loading-overlay;
+    backdrop-filter: blur(4px);
+    padding: $spacing-sm 20px;
+    border-radius: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid $border-transparent;
+
+    color: $text-secondary;
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    .spinner-small {
+        width: 16px;
+        height: 16px;
+        border: 2px solid $border-mid;
+        border-top-color: $primary-border;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .error-state {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100%;
-    color: #666;
-}
+    color: $danger-color;
+    gap: $spacing-lg;
 
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #333;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 16px;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
+    .error-icon {
+        width: 48px;
+        height: 48px;
+        background: $danger-bg;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 24px;
     }
 
-    100% {
-        transform: rotate(360deg);
+    .retry-btn {
+        background: $danger-color;
+        color: $white;
+        border: none;
+        padding: $spacing-sm $spacing-xl;
+        border-radius: $border-radius-sm;
+        cursor: pointer;
+        font-weight: 600;
+
+        &:hover {
+            background: $danger-hover;
+        }
     }
 }
