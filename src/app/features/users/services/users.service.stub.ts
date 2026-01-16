@@ -9,7 +9,7 @@ export class UsersServiceStub {
     groupedUsers = signal<UserGroup[]>([]);
     isLoading = signal<boolean>(false);
     error = signal<string | null>(null);
-    currentCriteria = signal<GroupingCriteria>('none');
+    currentCriteria = signal<GroupingCriteria>('all');
 
     async fetchUsers(force = false) {
         if (!force && this.users().length > 0) return;
@@ -22,7 +22,7 @@ export class UsersServiceStub {
             }
             const data: RandomUserResponse = await response.json();
             this.users.set(data.results);
-            this.setGroupingCriteria('none');
+            this.setGroupingCriteria('all');
         } catch (err) {
             console.error(err);
             this.error.set('Failed to load users');
@@ -34,7 +34,7 @@ export class UsersServiceStub {
     setGroupingCriteria(criteria: GroupingCriteria) {
         this.currentCriteria.set(criteria);
         // Basic grouping for test purposes
-        if (criteria === 'none') {
+        if (criteria === 'all') {
             this.groupedUsers.set([{ name: 'All Users', users: this.users() }]);
         } else {
             // Simplified grouping for tests

@@ -10,7 +10,7 @@ addEventListener('message', ({ data }) => {
 });
 
 function groupUsers(users: User[], criteria: GroupingCriteria): UserGroup[] {
-    if (criteria === 'none') {
+    if (criteria === 'all') {
         return [{ name: 'All Users', users }];
     }
 

@@ -19,7 +19,7 @@ export class UsersService {
 
     // State Signals
     private usersSignal = signal<User[]>([]);
-    private groupingCriteriaSignal = signal<GroupingCriteria>('none');
+    private groupingCriteriaSignal = signal<GroupingCriteria>('all');
     private groupedUsersSignal = signal<UserGroup[]>([]);
     private isLoadingSignal = signal<boolean>(false);
     private errorSignal = signal<string | null>(null);
@@ -37,7 +37,7 @@ export class UsersService {
         const criteria = this.groupingCriteriaSignal();
 
         // If no grouping, just return users wrapped in items
-        if (criteria === 'none') {
+        if (criteria === 'all') {
             return this.usersSignal().map(user => ({
                 type: 'user',
                 id: user.login.uuid,
@@ -159,7 +159,7 @@ export class UsersService {
             return;
         }
 
-        if (criteria === 'none') {
+        if (criteria === 'all') {
             this.groupedUsersSignal.set([]);
             this.isLoadingSignal.set(false);
             return;

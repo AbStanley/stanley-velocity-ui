@@ -61,7 +61,7 @@ export interface User {
     nat: string;
 }
 
-export type GroupingCriteria = 'alphabetical' | 'age' | 'nationality' | 'none';
+export type GroupingCriteria = 'alphabetical' | 'age' | 'nationality' | 'all';
 
 export interface UserGroup {
     name: string;
