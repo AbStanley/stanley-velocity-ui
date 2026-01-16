@@ -3,6 +3,7 @@ import { Injectable, signal, computed, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { User, UserGroup, GroupingCriteria, RandomUserResponse } from '../models/user.model';
 import { catchError, map, Observable, of, tap } from 'rxjs';
+import { MockResult } from '../../../services/mock-data';
 
 export type UserListItem =
     | { type: 'header'; id: string; label: string; count: number }
@@ -12,7 +13,8 @@ export type UserListItem =
     providedIn: 'root',
 })
 export class UsersService {
-    private readonly apiUrl = 'https://randomuser.me/api/?results=5&seed=awork';
+    private readonly apiUrl = 'https://randomuser.me/api/?results=5000&seed=awork';
+    private readonly USE_MOCK_DATA = true; // TOGGLE THIS TO FALSE TO USE API
 
     // State Signals
     private usersSignal = signal<User[]>([]);
@@ -91,6 +93,18 @@ export class UsersService {
 
         this.isLoadingSignal.set(true);
         this.errorSignal.set(null);
+
+        if (this.USE_MOCK_DATA) {
+            // Use mock data immediately
+            console.log('Using Mock Data for users');
+            // We need to cast as unknown first because the Mock types might not perfectly overlap in strict mode
+            // but the runtime data structure is compatible.
+            const data = MockResult.results as unknown as User[];
+
+            this.usersSignal.set(data);
+            this.setGroupingCriteria(this.groupingCriteriaSignal());
+            return;
+        }
 
         this.http.get<RandomUserResponse>(this.apiUrl).pipe(
             map(response => response.results),
