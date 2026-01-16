@@ -1,5 +1,5 @@
 
-import { Component, Input, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { User } from '../../models/user.model';
 
@@ -13,10 +13,10 @@ import { User } from '../../models/user.model';
 })
 export class UserCardComponent {
   @Input({ required: true }) user!: User;
+  @Input() expanded = false;
+  @Output() toggle = new EventEmitter<void>();
 
-  expanded = signal(false);
-
-  toggleExpand() {
-    this.expanded.update(v => !v);
+  onToggle() {
+    this.toggle.emit();
   }
 }
