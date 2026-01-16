@@ -2,10 +2,10 @@
     <!-- Toolbar / Controls -->
     <div class="toolbar">
         <div class="grouping-controls">
-            <span class="label">Group by:</span>
-            <div class="btn-group">
-                <button [class.active]="usersService.currentCriteria() === 'none'"
-                    (click)="setCriteria('none')">None</button>
+            <span class="label">Group by</span>
+            <div class="segment-control">
+                <button [class.active]="usersService.currentCriteria() === 'all'"
+                    (click)="setCriteria('all')">All</button>
                 <button [class.active]="usersService.currentCriteria() === 'alphabetical'"
                     (click)="setCriteria('alphabetical')">Alphabetical</button>
                 <button [class.active]="usersService.currentCriteria() === 'age'"
@@ -17,24 +17,38 @@
 
         <div class="stats">
             @if (usersService.users().length; as total) {
-            <span>Total: {{ total }} users</span>
+            <span class="user-count">{{ total }} Users</span>
             }
         </div>
     </div>
 
-    <!-- Loading State (Initial) -->
+    <div class="list-header">
+        <div class="col-user">User</div>
+        <div class="col-contact">Contact</div>
+        <div class="col-details">Details</div>
+    </div>
+
+    <!-- Loading State (Skeleton) -->
     @if (usersService.isLoading() && usersService.users().length === 0) {
     <div class="loading-state">
-        <div class="spinner"></div>
-        <p>Loading Users...</p>
+        @for (i of [1,2,3,4,5,6]; track i) {
+        <div class="skeleton-card">
+            <div class="skeleton-avatar"></div>
+            <div class="skeleton-info">
+                <div class="skeleton-line short"></div>
+                <div class="skeleton-line long"></div>
+            </div>
+        </div>
+        }
     </div>
     }
 
     <!-- Error State -->
     @if (usersService.error(); as err) {
     <div class="error-state">
+        <div class="error-icon">!</div>
         <p>{{ err }}</p>
-        <button (click)="usersService.fetchUsers()">Retry</button>
+        <button class="retry-btn" (click)="usersService.fetchUsers()">Retry</button>
     </div>
     }
 
@@ -42,15 +56,17 @@
     <div class="content post-loading" [class.hidden]="usersService.isLoading() && usersService.users().length === 0">
 
         <!-- Single Virtual Scroll for EVERYTHING (Flat & Grouped) -->
-        <cdk-virtual-scroll-viewport itemSize="80" class="viewport" (scrolledIndexChange)="onScroll()">
+        <cdk-virtual-scroll-viewport itemSize="88" class="viewport" (scrolledIndexChange)="onScroll()">
 
             <div *cdkVirtualFor="let item of flattenedUsers(); trackBy: trackByFn" class="virtual-item">
 
                 @switch (item.type) {
                 @case ('header') {
                 <div class="group-header-item">
-                    <span class="header-title">{{ $any(item).label }}</span>
-                    <span class="header-count">({{ $any(item).count }})</span>
+                    <div class="header-content">
+                        <span class="header-title">{{ $any(item).label }}</span>
+                        <span class="header-badge">{{ $any(item).count }}</span>
+                    </div>
                 </div>
                 }
                 @case ('user') {
@@ -66,7 +82,7 @@
         @if (usersService.isLoading() && usersService.users().length > 0) {
         <div class="loading-more">
             <div class="spinner-small"></div>
-            <span>Loading more...</span>
+            <span>Loading more users...</span>
         </div>
         }
 

@@ -11,7 +11,7 @@ class MockUsersService {
 
     isLoading = signal(false);
     error = signal(null);
-    currentCriteria = signal('none');
+    currentCriteria = signal('all');
 
     // flattenedUsers to mock
     flattenedUsers = signal([]);
