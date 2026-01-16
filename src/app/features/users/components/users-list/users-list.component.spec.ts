@@ -2,15 +2,34 @@ import { ComponentFixture, TestBed, fakeAsync, tick, flush } from '@angular/core
 import { UsersListComponent } from './users-list.component';
 import { UsersService } from '../../services/users.service';
 import { UsersServiceStub } from '../../services/users.service.stub';
+import { UsersListStateService } from '../../services/users-list-state.service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { Subject } from 'rxjs';
+import { signal, Injectable } from '@angular/core';
+
+@Injectable()
+class UsersListStateServiceStub {
+    expandedUserIds = signal<Set<string>>(new Set());
+    toggleUserExpanded(userId: string) {
+        this.expandedUserIds.update(s => {
+            const newSet = new Set(s);
+            if (newSet.has(userId)) {
+                newSet.delete(userId);
+            } else {
+                newSet.add(userId);
+            }
+            return newSet;
+        });
+    }
+}
 
 describe('UsersListComponent', () => {
     let component: UsersListComponent;
     let fixture: ComponentFixture<UsersListComponent>;
     let usersService: UsersServiceStub;
+    let stateService: UsersListStateServiceStub;
     let mockViewport: CdkVirtualScrollViewport;
 
     beforeEach(async () => {
@@ -18,6 +37,7 @@ describe('UsersListComponent', () => {
             imports: [UsersListComponent],
             providers: [
                 { provide: UsersService, useClass: UsersServiceStub },
+                { provide: UsersListStateService, useClass: UsersListStateServiceStub },
                 provideHttpClient(),
                 provideHttpClientTesting()
             ]
@@ -26,8 +46,9 @@ describe('UsersListComponent', () => {
         fixture = TestBed.createComponent(UsersListComponent);
         component = fixture.componentInstance;
         usersService = TestBed.inject(UsersService) as unknown as UsersServiceStub;
+        stateService = TestBed.inject(UsersListStateService) as unknown as UsersListStateServiceStub;
 
-        fixture.detectChanges(); 
+        fixture.detectChanges();
 
         mockViewport = component.viewport;
         spyOn(mockViewport, 'measureScrollOffset').and.returnValue(0);

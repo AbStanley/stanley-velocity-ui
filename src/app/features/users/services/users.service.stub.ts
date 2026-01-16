@@ -19,35 +19,40 @@ export class UsersServiceStub {
     // Mock filteredUsers
     filteredUsers = signal<User[]>([]);
 
-    async fetchUsers(force = false) {
-        if (!force && this.users().length > 0) return;
+    private mockData: User[] = [];
 
+    // Helper to set mock data for tests
+    setMockData(users: User[]) {
+        this.mockData = users;
+        this.users.set(users);
+        this.filteredUsers.set(users);
+        this.flattenedUsers.set(users.map(u => ({ type: 'user', id: u.login.uuid, data: u }))); // Basic flattening
+    }
+
+    fetchUsers(force = false) {
         this.isLoading.set(true);
-        try {
-            const response = await fetch('/mock-data.json');
-            if (!response.ok) {
-                throw new Error('Failed to load mock data');
+        // Simulate async delay if needed, or just set immediately
+        setTimeout(() => {
+            if (this.mockData.length === 0) {
+                // Fallback if no mock data set, maybe set empty?
+            } else {
+                this.users.set(this.mockData);
+                this.filteredUsers.set(this.mockData);
             }
-            const data: RandomUserResponse = await response.json();
-            this.users.set(data.results);
-            this.filteredUsers.set(data.results); // Initialize filteredUsers
-            this.setGroupingCriteria('all');
-        } catch (err) {
-            console.error(err);
-            this.error.set('Failed to load users');
-        } finally {
+            this.setGroupingCriteria(this.currentCriteria());
             this.isLoading.set(false);
-        }
+        }, 10);
     }
 
     setGroupingCriteria(criteria: GroupingCriteria) {
         this.currentCriteria.set(criteria);
         // Basic grouping for test purposes
+        const currentUsers = this.filteredUsers();
         if (criteria === 'all') {
-            this.groupedUsers.set([{ name: 'All Users', users: this.filteredUsers() }]);
+            this.groupedUsers.set([{ name: 'All Users', users: currentUsers }]);
         } else {
             // Simplified grouping for tests
-            this.groupedUsers.set([{ name: 'Test Group', users: this.filteredUsers() }]);
+            this.groupedUsers.set([{ name: 'Test Group', users: currentUsers }]);
         }
     }
 
@@ -58,10 +63,10 @@ export class UsersServiceStub {
     loadMore() {
         this.isLoading.set(true);
         setTimeout(() => {
-            // Signal a change
             this.isLoading.set(false);
+            // Simulate adding more users or just trigger update
             this.flattenedUsers.update(u => [...u]);
-        }, 0);
+        }, 10);
     }
 
     refresh() {
