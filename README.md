@@ -1,34 +1,62 @@
 # Awork Challenge
 
-Hello ! Welcome to the awork challenge 🤩. We are looking forward to seeing what you will come up with!
+Hello! Welcome to the awork challenge 🤩.
 
-Let us know if you have any questions and refer to the instructions sent to you. This readme contains mostly the install steps to get up and running with the application in its initial state. Feel free to change as you see fit.
+This project represents a user management interface built with Angular 20, demonstrating modern reactive patterns using Signals, high-performance DOM updates, and efficient heavy computation handling.
+
+## Getting Started
 
 ### Prerequisites
 
-- Install [Node.js](https://nodejs.org/) which includes [Node Package Manager][npm](https://www.npmjs.com/get-npm)
-- Run `npm install` to install the node packages
+- [Node.js](https://nodejs.org/) (Latest LTS recommended)
+- [NPM](https://www.npmjs.com/) (Included with Node.js)
+- [Angular CLI](https://angular.dev/tools/cli) (Globally installed is recommended, but not strictly required if using `npx`)
 
-## Development server
+### Installation
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+1. **Clone the repository** (if you haven't already).
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-## Code scaffolding
+## 🛠 Usage
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Development Server
 
-## Build
+Run the application locally with hot-reload enabled:
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+```bash
+ng serve
+```
+Navigate to `http://localhost:4200/` in your browser.
 
-## Running unit tests
+### Running Unit Tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Execute the unit test suite via [Karma](https://karma-runner.github.io):
 
-## Running end-to-end tests
+```bash
+ng test
+```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+### Build
 
-## Further help
+Build the project for production:
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+```bash
+ng build
+```
+The build artifacts will be stored in the `dist/` directory.
+
+## 🌟 Key Features
+
+- **User List**: Displays a list of users fetched from a remote API.
+- **Infinite Scroll**: Efficiently loads more users as you scroll.
+- **Client-Side Search**: Instantly filter users by name or email.
+- **Dynamic Grouping**: Group users by Alphabet, Age, or Nationality.
+- **Responsive Design**: Mobile-friendly layout and interactions.
+
+## 📚 Documentation
+
+For a deep dive into the technical architecture, decision-making process, and implementation details, please refer to the [Feature Documentation](FEATURE_DOCUMENTATION.md).
+
