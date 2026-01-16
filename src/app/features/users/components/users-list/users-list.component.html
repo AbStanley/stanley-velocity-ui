@@ -16,53 +16,63 @@
         </div>
 
         <div class="stats">
-            <span *ngIf="usersService.users().length as total">Total: {{ total }} users</span>
+            @if (usersService.users().length; as total) {
+            <span>Total: {{ total }} users</span>
+            }
         </div>
     </div>
 
     <!-- Loading State -->
-    <div *ngIf="usersService.isLoading()" class="loading-state">
+    @if (usersService.isLoading()) {
+    <div class="loading-state">
         <div class="spinner"></div>
         <p>Loading Users...</p>
     </div>
+    }
 
     <!-- Error State -->
-    <div *ngIf="usersService.error() as err" class="error-state">
+    @if (usersService.error(); as err) {
+    <div class="error-state">
         <p>{{ err }}</p>
         <button (click)="usersService.fetchUsers()">Retry</button>
     </div>
+    }
 
     <!-- Content -->
-    <div class="content post-loading" *ngIf="!usersService.isLoading()">
+    @if (!usersService.isLoading()) {
+    <div class="content post-loading">
 
         <!-- Single Virtual Scroll for EVERYTHING (Flat & Grouped) -->
         <cdk-virtual-scroll-viewport itemSize="80" class="viewport">
             <!-- 
-                Using *cdkVirtualFor with our flattened list.
-                We switch on 'item.type' to decide what to render.
-             -->
+                    Using *cdkVirtualFor with our flattened list.
+                    We switch on 'item.type' to decide what to render.
+                -->
             <div *cdkVirtualFor="let item of flattenedUsers(); trackBy: trackByFn" class="virtual-item">
 
-                <ng-container [ngSwitch]="item.type">
-
-                    <!-- Header Item -->
-                    <div *ngSwitchCase="'header'" class="group-header-item">
-                        <!-- We need to cast item to the specific header type to access properties safely in template? 
-                             Angular templates are loose, but let's be aware. 
-                             'item' is UserListItem. 
-                         -->
-                        <span class="header-title">{{ $any(item).label }}</span>
-                        <span class="header-count">({{ $any(item).count }})</span>
-                    </div>
-
-                    <!-- User Item -->
-                    <app-user-card *ngSwitchCase="'user'" [user]="$any(item).data">
-                    </app-user-card>
-
-                </ng-container>
+                @switch (item.type) {
+                @case ('header') {
+                <!-- Header Item -->
+                <div class="group-header-item">
+                    <!-- We need to cast item to the specific header type to access properties safely in template? 
+                                     Angular templates are loose, but let's be aware. 
+                                     'item' is UserListItem. 
+                                 -->
+                    <span class="header-title">{{ $any(item).label }}</span>
+                    <span class="header-count">({{ $any(item).count }})</span>
+                </div>
+                }
+                @case ('user') {
+                <!-- User Item -->
+                <app-user-card [user]="$any(item).data" [expanded]="expandedUserIds().has($any(item).data.login.uuid)"
+                    (toggle)="toggleUser($any(item).data.login.uuid)">
+                </app-user-card>
+                }
+                }
 
             </div>
         </cdk-virtual-scroll-viewport>
 
     </div>
+    }
 </div>

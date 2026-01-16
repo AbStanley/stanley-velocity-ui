@@ -19,6 +19,11 @@ export class UsersListComponent implements OnInit {
 
   // Use the flattened signal for the single virtual list
   flattenedUsers = this.usersService.flattenedUsers;
+  expandedUserIds = this.usersService.expandedUserIds;
+
+  toggleUser(userId: string) {
+    this.usersService.toggleUserExpanded(userId);
+  }
 
   ngOnInit() {
     this.usersService.fetchUsers();
