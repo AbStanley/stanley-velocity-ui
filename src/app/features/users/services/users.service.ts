@@ -13,8 +13,9 @@ export type UserListItem =
     providedIn: 'root',
 })
 export class UsersService {
-    private readonly apiUrl = 'https://randomuser.me/api/?results=5000&seed=awork';
-    private readonly USE_MOCK_DATA = true; // TOGGLE THIS TO FALSE TO USE API
+    private readonly apiUrl = 'https://randomuser.me/api/';
+    private readonly USE_MOCK_DATA = true; // MY NOTE: THIS TOGGLE WILL BE MOVED TO ALLOW TO SEARCH WITHOUT CALLING THE API
+    private readonly PAGE_SIZE = 15;
 
     // State Signals
     private usersSignal = signal<User[]>([]);
@@ -22,6 +23,7 @@ export class UsersService {
     private groupedUsersSignal = signal<UserGroup[]>([]);
     private isLoadingSignal = signal<boolean>(false);
     private errorSignal = signal<string | null>(null);
+    private currentPageSignal = signal<number>(1);
 
     // Read-only Exposed Signals
     readonly users = this.usersSignal.asReadonly();
@@ -31,7 +33,6 @@ export class UsersService {
     readonly currentCriteria = this.groupingCriteriaSignal.asReadonly();
 
     // Computed Signal for Virtual Scroll
-    // Flattens the grouped structure into a single list of items (headers + users)
     readonly flattenedUsers = computed<UserListItem[]>(() => {
         const criteria = this.groupingCriteriaSignal();
 
@@ -77,41 +78,45 @@ export class UsersService {
 
     private initWorker() {
         if (typeof Worker !== 'undefined') {
-            this.worker = new Worker(new URL('../../../workers/grouping.worker', import.meta.url));
-            this.worker.onmessage = ({ data }) => {
-                this.groupedUsersSignal.set(data);
-                this.isLoadingSignal.set(false); // Stop loading after grouping is done
-            };
+            try {
+                this.worker = new Worker(new URL('../../../workers/grouping.worker', import.meta.url));
+                this.worker.onmessage = ({ data }) => {
+                    this.groupedUsersSignal.set(data);
+                    this.isLoadingSignal.set(false); // Stop loading after grouping is done
+                };
+            } catch (e) {
+                console.warn('Failed to initialize worker:', e);
+            }
         } else {
             console.warn('Web Workers are not supported in this environment.');
-            // Fallback could be added here if needed, but requirements specify Web Worker.
         }
     }
 
-    fetchUsers(force = false): void {
-        if (!force && this.usersSignal().length > 0) return; // Already loaded
-
+    fetchUsers(page = this.currentPageSignal(), results = this.PAGE_SIZE): void {
         this.isLoadingSignal.set(true);
         this.errorSignal.set(null);
 
         if (this.USE_MOCK_DATA) {
-            // Use mock data immediately
-            console.log('Using Mock Data for users');
-            // We need to cast as unknown first because the Mock types might not perfectly overlap in strict mode
-            // but the runtime data structure is compatible.
-            const data = MockResult.results as unknown as User[];
+            // MY NOTE: Simulate API delay slightly for realism if needed, but synchronous is fine for mock
+            console.log(`Using Mock Data for users page ${page}`);
 
-            this.usersSignal.set(data);
-            this.setGroupingCriteria(this.groupingCriteriaSignal());
+
+            const allMockData = MockResult.results as unknown as User[];
+
+            const start = (page - 1) * results;
+            const end = start + results;
+            const dataChunk = allMockData.slice(start, end);
+
+            this.updateUsersState(dataChunk, page);
             return;
         }
 
-        this.http.get<RandomUserResponse>(this.apiUrl).pipe(
+        const url = `${this.apiUrl}?page=${page}&results=${results}&seed=awork`;
+
+        this.http.get<RandomUserResponse>(url).pipe(
             map(response => response.results),
             tap(users => {
-                this.usersSignal.set(users);
-                // Trigger initial grouping
-                this.setGroupingCriteria(this.groupingCriteriaSignal());
+                this.updateUsersState(users, page);
             }),
             catchError(err => {
                 this.errorSignal.set('Failed to load users. Please try again.');
@@ -122,16 +127,39 @@ export class UsersService {
         ).subscribe();
     }
 
+    private updateUsersState(newUsers: User[], page: number) {
+        if (page === 1) {
+            this.usersSignal.set(newUsers);
+        } else {
+            this.usersSignal.update(current => [...current, ...newUsers]);
+        }
+
+        this.setGroupingCriteria(this.groupingCriteriaSignal());
+    }
+
+    loadMore(): void {
+        if (this.isLoadingSignal()) return;
+        const nextPage = this.currentPageSignal() + 1;
+        this.currentPageSignal.set(nextPage);
+        this.fetchUsers(nextPage);
+    }
+
+    refresh(): void {
+        this.currentPageSignal.set(1);
+        this.usersSignal.set([]); // Optional: clear immediately or wait for load
+        this.fetchUsers(1);
+    }
+
     setGroupingCriteria(criteria: GroupingCriteria): void {
         this.groupingCriteriaSignal.set(criteria);
 
-        // If users are not loaded yet, don't group
         const currentUsers = this.usersSignal();
-        if (currentUsers.length === 0) return;
+        if (currentUsers.length === 0) {
+            this.isLoadingSignal.set(false);
+            return;
+        }
 
-        // If we switch to none, we don't need the worker, we just use the computed directly
         if (criteria === 'none') {
-            // No worker needed for 'none', flattenedUsers handles it
             this.groupedUsersSignal.set([]);
             this.isLoadingSignal.set(false);
             return;
@@ -142,7 +170,6 @@ export class UsersService {
         if (this.worker) {
             this.worker.postMessage({ users: currentUsers, criteria });
         } else {
-            // Fallback for non-worker environment (shouldn't happen in modern browsers)
             console.error('Worker not initialized');
             this.isLoadingSignal.set(false);
         }
