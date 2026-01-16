@@ -2,15 +2,17 @@
 
 :host {
   display: block;
-  margin-bottom: $spacing-s;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .user-card {
+  position: relative;
   background: $color-white;
   border-radius: $border-size-m;
   @include shadow(s);
   cursor: pointer;
-  overflow: hidden;
+  overflow: visible;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(0, 0, 0, 0.08);
 
@@ -21,23 +23,24 @@
 
   &.expanded {
     background-color: $color-ice;
-    border-color: $color-blue-700;
-    box-shadow: none;
-  }
+    border: none;
+    border-radius: $border-size-m $border-size-m 0 0;
 
-  @include media-breakpoint-down(s) {
-    &.expanded {
-      overflow: visible;
-    }
+    box-shadow:
+      inset 1px 0 0 $color-blue-700,
+      inset -1px 0 0 $color-blue-700,
+      inset 0 1px 0 $color-blue-700;
+    z-index: 100;
   }
 }
 
 .user-summary {
   display: grid;
-  grid-template-columns: minmax(200px, 1fr) minmax(150px, 1fr) minmax(150px, 1fr) auto;
+  grid-template-columns: 2fr 1fr 1fr auto;
   align-items: center;
   padding: $spacing-m $spacing-l;
-  gap: $spacing-l;
+  gap: $spacing-m;
+  min-width: 0;
 }
 
 .col-user {
@@ -50,7 +53,7 @@
 @include media-breakpoint-down(s) {
   .user-summary {
     grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto;
+    grid-template-rows: auto;
     gap: $spacing-s;
     padding: $spacing-m;
   }
@@ -65,37 +68,22 @@
     grid-row: 1;
   }
 
-  .col-contact {
-    display: flex;
-    grid-column: 1;
-    grid-row: 2;
-  }
-
+  .col-contact,
   .col-details {
-    display: flex;
-    grid-column: 2;
-    grid-row: 2;
+    display: none;
   }
 
-  .user-card.expanded .user-summary {
-    position: sticky;
-    top: 0px;
-    z-index: 10;
-    background-color: $color-ice;
-    border-bottom: none;
-    border-radius: $border-size-m $border-size-m $border-size-m $border-size-m;
-    margin: $spacing-s 0 0 0;
+  .user-avatar {
+    width: 40px;
+    height: 40px;
   }
 
-  .details-content {
-    padding: $spacing-l;
-    min-height: 0;
-    border-radius: 0 0 $border-size-m $border-size-m;
+  .user-info .name {
+    font-size: 1rem;
   }
 
-  .user-details {
-    border-radius: 0 0 $border-size-m $border-size-m;
-
+  .user-info .email {
+    font-size: 0.8rem;
   }
 }
 
@@ -199,33 +187,66 @@
 }
 
 .user-details {
-  background-color: $color-smoke; // #fafafa
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+
+  background-color: $color-white;
+  border-radius: 0 0 $border-size-m $border-size-m;
+  box-shadow:
+    inset 1px 0 0 $color-blue-700,
+    inset -1px 0 0 $color-blue-700,
+    inset 0 -1px 0 $color-blue-700,
+    0 4px 12px rgba(0, 0, 0, 0.15);
+
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   opacity: 0;
-
-  @include media-breakpoint-down(s) {
-    background-color: $color-white;
-  }
+  pointer-events: none;
 }
 
 .user-card.expanded .user-details {
   grid-template-rows: 1fr;
   opacity: 1;
+  pointer-events: auto;
 }
 
 .details-content {
   padding: $spacing-l;
   min-height: 0;
   border-top: none;
+
+  @include media-breakpoint-down(s) {
+    padding: $spacing-m;
+  }
+}
+
+.mobile-contact-section {
+  display: none;
+
+  @include media-breakpoint-down(s) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-m;
+    padding-bottom: $spacing-m;
+    margin-bottom: $spacing-m;
+    border-bottom: 1px solid $color-dust;
+  }
 }
 
 .detail-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: $spacing-l;
+
+  @include media-breakpoint-down(s) {
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-m;
+  }
 }
 
 .user-details .detail-item {

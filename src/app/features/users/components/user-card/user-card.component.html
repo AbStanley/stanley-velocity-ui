@@ -38,6 +38,25 @@
 
     <div class="user-details">
         <div class="details-content">
+            <div class="mobile-contact-section">
+                <div class="detail-item">
+                    <span class="label">Phone</span>
+                    <span class="value">{{ user.phone }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Cell</span>
+                    <span class="value">{{ user.cell }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Nationality</span>
+                    <span class="value">{{ user.nat }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Location</span>
+                    <span class="value">{{ user.location.city }}, {{ user.location.country }}</span>
+                </div>
+            </div>
+
             <div class="detail-grid">
                 <div class="detail-item">
                     <span class="label">Date of Birth</span>

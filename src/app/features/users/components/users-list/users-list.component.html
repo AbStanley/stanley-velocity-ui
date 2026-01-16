@@ -63,11 +63,11 @@
     <!-- Content -->
     <div class="content post-loading" [class.hidden]="usersService.isLoading() && usersService.users().length === 0">
 
-        <!-- Scroll Container -->
-        <div class="scroll-container" #scrollContainer>
+        <!-- Virtual Scroll Container -->
+        <cdk-virtual-scroll-viewport class="scroll-container">
 
-            <div class="list-items-wrapper">
-                @for (item of flattenedUsers(); track trackByFn($index, item)) {
+            <div *cdkVirtualFor="let item of flattenedUsers(); trackBy: trackByFn" class="virtual-item"
+                [style.height.px]="item.type === 'header' ? 50 : (isMobile() ? 180 : 120)">
                 @switch (item.type) {
                 @case ('header') {
                 <div class="group-header-item">
@@ -86,10 +86,7 @@
                 </div>
                 }
                 }
-                }
             </div>
-
-            <div #sentinel class="sentinel"></div>
 
             @if (usersService.isLoading() && usersService.users().length > 0) {
             <div class="loading-more">
@@ -97,7 +94,7 @@
                 <span>Loading more users...</span>
             </div>
             }
-        </div>
+        </cdk-virtual-scroll-viewport>
 
     </div>
 </div>

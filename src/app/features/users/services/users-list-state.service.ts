@@ -9,13 +9,10 @@ export class UsersListStateService {
 
     toggleUserExpanded(userId: string): void {
         this.expandedUserIdsSignal.update(currentSet => {
-            const newSet = new Set(currentSet);
-            if (newSet.has(userId)) {
-                newSet.delete(userId);
-            } else {
-                newSet.add(userId);
+            if (currentSet.has(userId)) {
+                return new Set<string>();
             }
-            return newSet;
+            return new Set([userId]);
         });
     }
 }

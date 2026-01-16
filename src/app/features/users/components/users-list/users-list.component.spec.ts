@@ -1,23 +1,19 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick, flush } from '@angular/core/testing';
 import { UsersListComponent } from './users-list.component';
 import { UsersService } from '../../services/users.service';
 import { UsersServiceStub } from '../../services/users.service.stub';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import { Subject } from 'rxjs';
 
 describe('UsersListComponent', () => {
     let component: UsersListComponent;
     let fixture: ComponentFixture<UsersListComponent>;
     let usersService: UsersServiceStub;
+    let mockViewport: CdkVirtualScrollViewport;
 
     beforeEach(async () => {
-        // Mock IntersectionObserver
-        (window as any).IntersectionObserver = class {
-            observe() { }
-            disconnect() { }
-            unobserve() { }
-        };
-
         await TestBed.configureTestingModule({
             imports: [UsersListComponent],
             providers: [
@@ -30,7 +26,18 @@ describe('UsersListComponent', () => {
         fixture = TestBed.createComponent(UsersListComponent);
         component = fixture.componentInstance;
         usersService = TestBed.inject(UsersService) as unknown as UsersServiceStub;
-        fixture.detectChanges();
+
+        fixture.detectChanges(); 
+
+        mockViewport = component.viewport;
+        spyOn(mockViewport, 'measureScrollOffset').and.returnValue(0);
+        spyOn(mockViewport, 'scrollToOffset');
+        spyOn(mockViewport, 'scrollToIndex');
+        spyOn(mockViewport, 'checkViewportSize');
+        spyOn(mockViewport, 'getRenderedRange').and.returnValue({ start: 0, end: 10 });
+        const elementScrolledSubject = new Subject<Event>();
+        spyOn(mockViewport, 'elementScrolled').and.returnValue(elementScrolledSubject.asObservable());
+        (mockViewport as any)._scrolled = elementScrolledSubject;
     });
 
     it('should create', () => {
@@ -91,4 +98,39 @@ describe('UsersListComponent', () => {
 
         expect(usersService.searchQuery()).toBe('');
     });
+
+    it('should reset scroll to top when changing grouping criteria', fakeAsync(() => {
+        component.setCriteria('alphabetical');
+        tick(100);
+        expect(mockViewport.scrollToIndex).toHaveBeenCalledWith(0);
+    }));
+
+    it('should reset scroll to top when searching', fakeAsync(() => {
+        const input = fixture.nativeElement.querySelector('.search-box input');
+        input.value = 'test';
+        input.dispatchEvent(new Event('input')); // This calls onSearch which calls scrollToTop (setTimeout)
+
+        tick(100);
+        expect(mockViewport.scrollToIndex).toHaveBeenCalledWith(0);
+    }));
+
+    it('should preserve scroll position when loading more', fakeAsync(() => {
+        (mockViewport.measureScrollOffset as jasmine.Spy).and.returnValue(500);
+
+        component.loadMoreWithScrollPreservation();
+        fixture.detectChanges(); // Propagate initial state
+
+        // Allow service logic (setTimeout 0) to run
+        tick(100);
+        fixture.detectChanges(); // Propagate service completion
+
+        // Allow requestAnimationFrame to run
+        tick(100);
+        fixture.detectChanges();
+
+        flush();
+
+        expect(mockViewport.scrollToOffset).toHaveBeenCalledWith(500);
+    }));
 });
+

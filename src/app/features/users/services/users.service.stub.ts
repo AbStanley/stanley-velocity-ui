@@ -54,4 +54,17 @@ export class UsersServiceStub {
     setSearchQuery(query: string) {
         this.searchQuery.set(query);
     }
+
+    loadMore() {
+        this.isLoading.set(true);
+        setTimeout(() => {
+            // Signal a change
+            this.isLoading.set(false);
+            this.flattenedUsers.update(u => [...u]);
+        }, 0);
+    }
+
+    refresh() {
+        this.fetchUsers(true);
+    }
 }
