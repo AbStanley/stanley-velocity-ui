@@ -48,8 +48,31 @@
 @media (max-width: 768px) {
   .user-summary {
     grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
     gap: 8px;
     padding: 12px;
+  }
+
+  .col-user {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .chevron {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .col-contact {
+    display: flex;
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .col-details {
+    display: flex;
+    grid-column: 2;
+    grid-row: 2;
   }
 
   .user-card.expanded .user-summary {
@@ -60,14 +83,6 @@
     border-bottom: none;
     border-radius: 12px 12px 12px 12px;
     margin: 8px 0x 0 0;
-  }
-
-  .col-contact {
-    display: none;
-  }
-
-  .col-details {
-    display: none;
   }
 
   .details-content {
