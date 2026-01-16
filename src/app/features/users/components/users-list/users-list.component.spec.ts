@@ -8,11 +8,13 @@ import { signal } from '@angular/core';
 class MockUsersService {
     users = signal([]);
     groupedUsers = signal([]);
-    // Add flattenedUsers to mock
-    flattenedUsers = signal([]);
+
     isLoading = signal(false);
     error = signal(null);
     currentCriteria = signal('none');
+
+    // flattenedUsers to mock
+    flattenedUsers = signal([]);
 
     fetchUsers() { }
     setGroupingCriteria() { }
