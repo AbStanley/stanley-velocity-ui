@@ -2,8 +2,7 @@
 import { Injectable, signal, computed, effect } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { User, UserGroup, GroupingCriteria, RandomUserResponse } from '../models/user.model';
-import { catchError, map, Observable, of, tap } from 'rxjs';
-import { MockResultMassive } from '../../../services/mock-data';
+import { catchError, map, of, tap } from 'rxjs';
 
 export type UserListItem =
     | { type: 'header'; id: string; label: string; count: number }
@@ -14,7 +13,6 @@ export type UserListItem =
 })
 export class UsersService {
     private readonly apiUrl = 'https://randomuser.me/api/';
-    private readonly USE_MOCK_DATA = true; // MY NOTE: THIS TOGGLE WILL BE MOVED TO ALLOW TO SEARCH WITHOUT CALLING THE API
     private readonly PAGE_SIZE = 20;
 
     // State Signals
@@ -127,21 +125,6 @@ export class UsersService {
     fetchUsers(page = this.currentPageSignal(), results = this.PAGE_SIZE): void {
         this.isLoadingSignal.set(true);
         this.errorSignal.set(null);
-
-        if (this.USE_MOCK_DATA) {
-            // MY NOTE: Simulate API delay slightly for realism if needed, but synchronous is fine for mock
-            console.log(`Using Mock Data for users page ${page}`);
-
-
-            const allMockData = MockResultMassive.results as unknown as User[];
-
-            const start = (page - 1) * results;
-            const end = start + results;
-            const dataChunk = allMockData.slice(start, end);
-
-            this.updateUsersState(dataChunk, page);
-            return;
-        }
 
         const url = `${this.apiUrl}?page=${page}&results=${results}&seed=awork`;
 
