@@ -3,6 +3,7 @@ import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { UsersService, UserListItem } from '../../services/users.service';
+import { UsersListStateService } from '../../services/users-list-state.service';
 import { UserCardComponent } from '../user-card/user-card.component';
 import { GroupingCriteria } from '../../models/user.model';
 
@@ -16,13 +17,14 @@ import { GroupingCriteria } from '../../models/user.model';
 })
 export class UsersListComponent implements OnInit {
   usersService = inject(UsersService);
+  stateService = inject(UsersListStateService);
 
   // Use the flattened signal for the single virtual list
   flattenedUsers = this.usersService.flattenedUsers;
-  expandedUserIds = this.usersService.expandedUserIds;
+  expandedUserIds = this.stateService.expandedUserIds;
 
   toggleUser(userId: string) {
-    this.usersService.toggleUserExpanded(userId);
+    this.stateService.toggleUserExpanded(userId);
   }
 
   ngOnInit() {

@@ -22,7 +22,6 @@ export class UsersService {
     private groupedUsersSignal = signal<UserGroup[]>([]);
     private isLoadingSignal = signal<boolean>(false);
     private errorSignal = signal<string | null>(null);
-    private expandedUserIdsSignal = signal<Set<string>>(new Set());
 
     // Read-only Exposed Signals
     readonly users = this.usersSignal.asReadonly();
@@ -30,7 +29,6 @@ export class UsersService {
     readonly isLoading = this.isLoadingSignal.asReadonly();
     readonly error = this.errorSignal.asReadonly();
     readonly currentCriteria = this.groupingCriteriaSignal.asReadonly();
-    readonly expandedUserIds = this.expandedUserIdsSignal.asReadonly();
 
     // Computed Signal for Virtual Scroll
     // Flattens the grouped structure into a single list of items (headers + users)
@@ -150,15 +148,4 @@ export class UsersService {
         }
     }
 
-    toggleUserExpanded(userId: string): void {
-        this.expandedUserIdsSignal.update(currentSet => {
-            const newSet = new Set(currentSet);
-            if (newSet.has(userId)) {
-                newSet.delete(userId);
-            } else {
-                newSet.add(userId);
-            }
-            return newSet;
-        });
-    }
 }
