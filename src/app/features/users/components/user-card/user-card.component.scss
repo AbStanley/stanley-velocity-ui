@@ -54,12 +54,12 @@
 
   .user-card.expanded .user-summary {
     position: sticky;
-    top: 50px;
+    top: 0px;
     z-index: 10;
     background-color: #f0f9ff;
     border-bottom: none;
-    border-radius: 12px 12px 0 0;
-    margin: 8px 8px 0 8px;
+    border-radius: 12px 12px 12px 12px;
+    margin: 8px 0x 0 0;
   }
 
   .col-contact {
@@ -69,6 +69,17 @@
   .col-details {
     display: none;
   }
+
+  .details-content {
+  padding: 16px;
+  min-height: 0;
+  border-radius: 0 0 12px 12px;
+}
+
+.user-details {
+  border-radius: 0 0 12px 12px;
+
+}
 }
 
 .user-avatar {
