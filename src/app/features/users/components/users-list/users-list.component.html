@@ -22,8 +22,8 @@
         </div>
     </div>
 
-    <!-- Loading State -->
-    @if (usersService.isLoading()) {
+    <!-- Loading State (Initial) -->
+    @if (usersService.isLoading() && usersService.users().length === 0) {
     <div class="loading-state">
         <div class="spinner"></div>
         <p>Loading Users...</p>
@@ -39,31 +39,21 @@
     }
 
     <!-- Content -->
-    @if (!usersService.isLoading()) {
-    <div class="content post-loading">
+    <div class="content post-loading" [class.hidden]="usersService.isLoading() && usersService.users().length === 0">
 
         <!-- Single Virtual Scroll for EVERYTHING (Flat & Grouped) -->
-        <cdk-virtual-scroll-viewport itemSize="80" class="viewport">
-            <!-- 
-                    Using *cdkVirtualFor with our flattened list.
-                    We switch on 'item.type' to decide what to render.
-                -->
+        <cdk-virtual-scroll-viewport itemSize="80" class="viewport" (scrolledIndexChange)="onScroll()">
+
             <div *cdkVirtualFor="let item of flattenedUsers(); trackBy: trackByFn" class="virtual-item">
 
                 @switch (item.type) {
                 @case ('header') {
-                <!-- Header Item -->
                 <div class="group-header-item">
-                    <!-- We need to cast item to the specific header type to access properties safely in template? 
-                                     Angular templates are loose, but let's be aware. 
-                                     'item' is UserListItem. 
-                                 -->
                     <span class="header-title">{{ $any(item).label }}</span>
                     <span class="header-count">({{ $any(item).count }})</span>
                 </div>
                 }
                 @case ('user') {
-                <!-- User Item -->
                 <app-user-card [user]="$any(item).data" [expanded]="expandedUserIds().has($any(item).data.login.uuid)"
                     (toggle)="toggleUser($any(item).data.login.uuid)">
                 </app-user-card>
@@ -73,6 +63,12 @@
             </div>
         </cdk-virtual-scroll-viewport>
 
+        @if (usersService.isLoading() && usersService.users().length > 0) {
+        <div class="loading-more">
+            <div class="spinner-small"></div>
+            <span>Loading more...</span>
+        </div>
+        }
+
     </div>
-    }
 </div>
