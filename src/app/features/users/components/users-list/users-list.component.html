@@ -35,21 +35,34 @@
     <!-- Content -->
     <div class="content post-loading" *ngIf="!usersService.isLoading()">
 
-        <!-- Virtual Scroll for Flat List (No Grouping) -->
-        <ng-container *ngIf="usersService.currentCriteria() === 'none'">
-            <cdk-virtual-scroll-viewport itemSize="80" class="viewport">
-                <app-user-card *cdkVirtualFor="let user of usersService.users()" [user]="user"></app-user-card>
-            </cdk-virtual-scroll-viewport>
-        </ng-container>
+        <!-- Single Virtual Scroll for EVERYTHING (Flat & Grouped) -->
+        <cdk-virtual-scroll-viewport itemSize="80" class="viewport">
+            <!-- 
+                Using *cdkVirtualFor with our flattened list.
+                We switch on 'item.type' to decide what to render.
+             -->
+            <div *cdkVirtualFor="let item of flattenedUsers(); trackBy: trackByFn" class="virtual-item">
 
-        <div *ngIf="usersService.currentCriteria() !== 'none'" class="grouped-list">
-            <div *ngFor="let group of usersService.groupedUsers()" class="group-section">
-                <div class="group-header">{{ group.name }} ({{ group.users.length }})</div>
-                <div class="group-items">
-                    <app-user-card *ngFor="let user of group.users" [user]="user"></app-user-card>
-                </div>
+                <ng-container [ngSwitch]="item.type">
+
+                    <!-- Header Item -->
+                    <div *ngSwitchCase="'header'" class="group-header-item">
+                        <!-- We need to cast item to the specific header type to access properties safely in template? 
+                             Angular templates are loose, but let's be aware. 
+                             'item' is UserListItem. 
+                         -->
+                        <span class="header-title">{{ $any(item).label }}</span>
+                        <span class="header-count">({{ $any(item).count }})</span>
+                    </div>
+
+                    <!-- User Item -->
+                    <app-user-card *ngSwitchCase="'user'" [user]="$any(item).data">
+                    </app-user-card>
+
+                </ng-container>
+
             </div>
-        </div>
+        </cdk-virtual-scroll-viewport>
 
     </div>
 </div>

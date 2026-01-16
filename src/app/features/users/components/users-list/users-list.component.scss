@@ -81,35 +81,47 @@
 .viewport {
     height: 100%;
     width: 100%;
+
+    /* Ensure the viewport takes available space */
+    .cdk-virtual-scroll-content-wrapper {
+        display: flex;
+        flex-direction: column;
+    }
 }
 
 .content {
     flex: 1;
     overflow: hidden;
-    /* For virtual scroll */
-}
-
-.grouped-list {
-    overflow-y: auto;
     height: 100%;
-    padding: 16px;
+    /* Important for virtual scroll to calculate height */
 }
 
-.group-section {
-    margin-bottom: 24px;
-}
-
-.group-header {
-    font-size: 1.2rem;
-    font-weight: 700;
+/* 
+   We treat headers as items in the virtual list.
+   They need a fixed height to match itemSize="80" 
+   (or we need to use a strategy for variable height, but let's stick to 80px for simplicity first, 
+   or just accept they are 80px tall like users).
+   If we want different heights, we need AutosizeStrategy which is heavier.
+   Let's try to make headers look good at 80px or whatever itemSize is.
+*/
+.group-header-item {
+    height: 80px;
+    /* Matches itemSize */
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    background: #f0f2f5;
     color: #333;
-    margin-bottom: 12px;
-    position: sticky;
-    top: 0;
-    background: #f8f9fa;
-    /* Match container bg */
-    padding: 8px 0;
-    z-index: 5;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #e0e0e0;
+
+    .header-count {
+        margin-left: 8px;
+        color: #666;
+        font-weight: 400;
+        font-size: 0.9rem;
+    }
 }
 
 .loading-state,

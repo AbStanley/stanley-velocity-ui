@@ -4,11 +4,15 @@ import { HttpClient } from '@angular/common/http';
 import { User, UserGroup, GroupingCriteria, RandomUserResponse } from '../models/user.model';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 
+export type UserListItem =
+    | { type: 'header'; id: string; label: string; count: number }
+    | { type: 'user'; id: string; data: User };
+
 @Injectable({
     providedIn: 'root',
 })
 export class UsersService {
-    private readonly apiUrl = 'https://randomuser.me/api/?results=5000&seed=awork';
+    private readonly apiUrl = 'https://randomuser.me/api/?results=5&seed=awork';
 
     // State Signals
     private usersSignal = signal<User[]>([]);
@@ -23,6 +27,44 @@ export class UsersService {
     readonly isLoading = this.isLoadingSignal.asReadonly();
     readonly error = this.errorSignal.asReadonly();
     readonly currentCriteria = this.groupingCriteriaSignal.asReadonly();
+
+    // Computed Signal for Virtual Scroll
+    // Flattens the grouped structure into a single list of items (headers + users)
+    readonly flattenedUsers = computed<UserListItem[]>(() => {
+        const criteria = this.groupingCriteriaSignal();
+
+        // If no grouping, just return users wrapped in items
+        if (criteria === 'none') {
+            return this.usersSignal().map(user => ({
+                type: 'user',
+                id: user.login.uuid,
+                data: user
+            }));
+        }
+
+        // If grouped, flatten: [Header, User, User, Header, User...]
+        const groups = this.groupedUsersSignal();
+        const flatList: UserListItem[] = [];
+
+        for (const group of groups) {
+            flatList.push({
+                type: 'header',
+                id: `header-${group.name}`,
+                label: group.name,
+                count: group.users.length
+            });
+
+            for (const user of group.users) {
+                flatList.push({
+                    type: 'user',
+                    id: user.login.uuid,
+                    data: user
+                });
+            }
+        }
+
+        return flatList;
+    });
 
     // Worker
     private worker: Worker | undefined;
@@ -72,6 +114,14 @@ export class UsersService {
         // If users are not loaded yet, don't group
         const currentUsers = this.usersSignal();
         if (currentUsers.length === 0) return;
+
+        // If we switch to none, we don't need the worker, we just use the computed directly
+        if (criteria === 'none') {
+            // No worker needed for 'none', flattenedUsers handles it
+            this.groupedUsersSignal.set([]);
+            this.isLoadingSignal.set(false);
+            return;
+        }
 
         this.isLoadingSignal.set(true); // Show loading while grouping
 
