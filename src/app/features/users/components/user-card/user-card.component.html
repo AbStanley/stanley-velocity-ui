@@ -1,0 +1,43 @@
+<div class="user-card" (click)="toggleExpand()" [class.expanded]="expanded()">
+    <div class="user-summary">
+        <img [src]="user.picture.thumbnail" [alt]="user.name.first" class="user-avatar" loading="lazy">
+        <div class="user-info">
+            <h3 class="name">{{ user.name.first }} {{ user.name.last }}</h3>
+            <p class="email">{{ user.email }}</p>
+        </div>
+        <div class="chevron">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                [class.rotated]="expanded()">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </div>
+    </div>
+
+    <div class="user-details">
+        <div class="details-content">
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="label">Phone</span>
+                    <span class="value">{{ user.phone }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Cell</span>
+                    <span class="value">{{ user.cell }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Nationality</span>
+                    <span class="value">{{ user.nat }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Location</span>
+                    <span class="value">{{ user.location.city }}, {{ user.location.country }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Registered</span>
+                    <span class="value">{{ user.registered.date | date:'mediumDate' }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

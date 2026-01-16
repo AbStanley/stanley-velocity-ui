@@ -1,0 +1,55 @@
+<div class="list-container">
+    <!-- Toolbar / Controls -->
+    <div class="toolbar">
+        <div class="grouping-controls">
+            <span class="label">Group by:</span>
+            <div class="btn-group">
+                <button [class.active]="usersService.currentCriteria() === 'none'"
+                    (click)="setCriteria('none')">None</button>
+                <button [class.active]="usersService.currentCriteria() === 'alphabetical'"
+                    (click)="setCriteria('alphabetical')">Alphabetical</button>
+                <button [class.active]="usersService.currentCriteria() === 'age'"
+                    (click)="setCriteria('age')">Age</button>
+                <button [class.active]="usersService.currentCriteria() === 'nationality'"
+                    (click)="setCriteria('nationality')">Nationality</button>
+            </div>
+        </div>
+
+        <div class="stats">
+            <span *ngIf="usersService.users().length as total">Total: {{ total }} users</span>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="usersService.isLoading()" class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading Users...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="usersService.error() as err" class="error-state">
+        <p>{{ err }}</p>
+        <button (click)="usersService.fetchUsers()">Retry</button>
+    </div>
+
+    <!-- Content -->
+    <div class="content post-loading" *ngIf="!usersService.isLoading()">
+
+        <!-- Virtual Scroll for Flat List (No Grouping) -->
+        <ng-container *ngIf="usersService.currentCriteria() === 'none'">
+            <cdk-virtual-scroll-viewport itemSize="80" class="viewport">
+                <app-user-card *cdkVirtualFor="let user of usersService.users()" [user]="user"></app-user-card>
+            </cdk-virtual-scroll-viewport>
+        </ng-container>
+
+        <div *ngIf="usersService.currentCriteria() !== 'none'" class="grouped-list">
+            <div *ngFor="let group of usersService.groupedUsers()" class="group-section">
+                <div class="group-header">{{ group.name }} ({{ group.users.length }})</div>
+                <div class="group-items">
+                    <app-user-card *ngFor="let user of group.users" [user]="user"></app-user-card>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
