@@ -97,7 +97,8 @@ export class FlexibleVirtualScrollStrategy implements VirtualScrollStrategy, OnD
         const endPixel = scrollOffset + viewportSize + UI_CONSTANTS.SCROLL_BUFFER;
 
         const start = this.findOffsetIndex(startPixel);
-        const end = Math.min(this.items.length, this.findOffsetIndex(endPixel) + 1);
+        let end = this.findOffsetIndex(endPixel);
+        end = Math.min(this.items.length, end + 2);
 
         this.viewport.setRenderedRange({ start, end });
         this.viewport.setRenderedContentOffset(this.accumulatedOffsets[start]);
@@ -105,18 +106,25 @@ export class FlexibleVirtualScrollStrategy implements VirtualScrollStrategy, OnD
     }
 
     private findOffsetIndex(offset: number): number {
-        let low = 0;
-        let high = this.accumulatedOffsets.length - 2;
+        if (this.items.length === 0) return 0;
 
-        if (offset >= this.accumulatedOffsets[this.accumulatedOffsets.length - 1]) {
-            return this.accumulatedOffsets.length - 1;
+        const totalHeight = this.accumulatedOffsets[this.accumulatedOffsets.length - 1];
+        if (offset >= totalHeight) {
+            return this.items.length - 1;
         }
+
+        // A quick inary search for the item containing this offset
+        let low = 0;
+        let high = this.items.length - 1;
 
         while (low <= high) {
             const mid = Math.floor((low + high) / 2);
-            if (offset >= this.accumulatedOffsets[mid] && offset < this.accumulatedOffsets[mid + 1]) {
+            const itemStart = this.accumulatedOffsets[mid];
+            const itemEnd = this.accumulatedOffsets[mid + 1];
+
+            if (offset >= itemStart && offset < itemEnd) {
                 return mid;
-            } else if (offset < this.accumulatedOffsets[mid]) {
+            } else if (offset < itemStart) {
                 high = mid - 1;
             } else {
                 low = mid + 1;
