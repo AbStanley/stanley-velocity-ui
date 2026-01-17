@@ -135,17 +135,24 @@ export class UsersService {
 
     fetchUsers(page = this.currentPageSignal(), results = this.PAGE_SIZE): void {
         this.isLoadingSignal.set(true);
-        this.errorSignal.set(null);
+        if (page === 1) {
+            this.errorSignal.set(null);
+        }
 
         const url = `${this.apiUrl}?page=${page}&results=${results}&seed=awork`;
 
         this.http.get<RandomUserResponse>(url).pipe(
             map(response => response.results),
             tap(users => {
+                this.errorSignal.set(null); // Clear error on success
                 this.updateUsersState(users, page);
             }),
             catchError(err => {
-                this.errorSignal.set('Failed to load users. Please try again.');
+                if (page === 1) {
+                    this.errorSignal.set('Failed to load users. Please try again.');
+                } else {
+                    this.errorSignal.set('Failed to load more users. Please try again.');
+                }
                 this.isLoadingSignal.set(false);
                 console.error(err);
                 return of([]);

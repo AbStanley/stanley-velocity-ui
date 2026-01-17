@@ -53,11 +53,13 @@
 
     <!-- Error State -->
     @if (usersService.error(); as err) {
+    @if (usersService.users().length === 0) {
     <div class="global-error-state">
         <div class="error-icon">!</div>
         <p>{{ err }}</p>
         <button class="retry-btn" (click)="usersService.fetchUsers()">Retry</button>
     </div>
+    }
     }
 
     <!-- Content -->
@@ -92,6 +94,13 @@
             <div class="global-loading-more">
                 <div class="spinner-small"></div>
                 <span>Loading more users...</span>
+            </div>
+            }
+
+            @if (usersService.error() && usersService.users().length > 0) {
+            <div class="global-loading-more error">
+                <span>{{ usersService.error() }}</span>
+                <button class="retry-btn-small" (click)="usersService.loadMore()">Retry</button>
             </div>
             }
         </cdk-virtual-scroll-viewport>
