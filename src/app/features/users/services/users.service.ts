@@ -1,8 +1,8 @@
-
 import { Injectable, signal, computed } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { HttpClient } from '@angular/common/http';
 import { User, UserGroup, GroupingCriteria, RandomUserResponse } from '../models/user.model';
-import { catchError, map, of, tap } from 'rxjs';
+import { catchError, map, of, tap, debounceTime, distinctUntilChanged } from 'rxjs';
 
 export type UserListItem =
     | { type: 'header'; id: string; label: string; count: number }
@@ -42,10 +42,24 @@ export class UsersService {
     readonly searchQuery = this.searchQuerySignal.asReadonly();
 
     // Computed Signal for Filtering
-    // Note: For very large datasets (10000+), consider adding debounce via toObservable/debounceTime/toSignal
-    // This was attempted but adds test complexity. See FEATURE_DOCUMENTATION.md for details.
+    /**
+     * Changes Made
+RxJS Integration: I imported toObservable and toSignal from @angular/core/rxjs-interop, as well as debounceTime and distinctUntilChanged from RxJS.
+Debounce Logic: I created a private debouncedSearchQuery signal. It takes the raw searchQuerySignal, converts it to an Observable, applies a 300ms debounce, and converts it back to a Signal.
+Optimization: The filteredUsers computed signal now listens to debouncedSearchQuery.
+Result: When a user types fast ("J-O-H-N"), the expensive filtering logic (iterating over 5000+ users) only runs once after they stop typing, instead of running 4 times.
+UX: The Input field itself remains bound to the raw searchQuery signal, ensuring the UI is instantaneous (no "ghosting" or lag while typing).
+     */
+    private debouncedSearchQuery = toSignal(
+        toObservable(this.searchQuerySignal).pipe(
+            debounceTime(300),
+            distinctUntilChanged()
+        ),
+        { initialValue: '' }
+    );
+
     readonly filteredUsers = computed<User[]>(() => {
-        const query = this.searchQuerySignal().toLowerCase().trim();
+        const query = this.debouncedSearchQuery()!.toLowerCase().trim();
         const users = this.usersSignal();
 
         if (!query) {

@@ -1,34 +1,10 @@
 <div class="list-container">
     <!-- Toolbar / Controls -->
-    <div class="toolbar">
-        <div class="grouping-controls">
-            <div class="search-box">
-                <input type="text" placeholder="Search users..." [value]="usersService.searchQuery()"
-                    (input)="onSearch($event)">
-                @if (usersService.searchQuery()) {
-                <button class="clear-search" (click)="usersService.setSearchQuery('')">x</button>
-                }
-            </div>
-
-            <span class="label-text">Group by</span>
-            <div class="segment-control">
-                <button [class.active]="usersService.currentCriteria() === 'all'"
-                    (click)="setCriteria('all')">All</button>
-                <button [class.active]="usersService.currentCriteria() === 'alphabetical'"
-                    (click)="setCriteria('alphabetical')">Alphabetical</button>
-                <button [class.active]="usersService.currentCriteria() === 'age'"
-                    (click)="setCriteria('age')">Age</button>
-                <button [class.active]="usersService.currentCriteria() === 'nationality'"
-                    (click)="setCriteria('nationality')">Nationality</button>
-            </div>
-        </div>
-
-        <div class="stats">
-            @if (usersService.users().length; as total) {
-            <span class="user-count">{{ total }} Users</span>
-            }
-        </div>
-    </div>
+    <!-- Toolbar -->
+    <app-users-toolbar [searchQuery]="usersService.searchQuery()" [currentCriteria]="usersService.currentCriteria()"
+        [totalUsers]="usersService.users().length" (search)="usersService.setSearchQuery($event)"
+        (groupingChange)="setCriteria($event)" (clearSearch)="usersService.setSearchQuery('')">
+    </app-users-toolbar>
 
     <div class="list-header">
         <div class="col-user">User</div>

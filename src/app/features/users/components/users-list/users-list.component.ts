@@ -6,6 +6,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UsersService, UserListItem, isHeaderItem, isUserItem } from '../../services/users.service';
 import { UsersListStateService } from '../../services/users-list-state.service';
 import { UserCardComponent } from '../user-card/user-card.component';
+import { UsersToolbarComponent } from '../users-toolbar/users-toolbar.component';
 import { GroupingCriteria } from '../../models/user.model';
 import { FlexibleVirtualScrollStrategy } from '../../../../shared/strategies/flexible-virtual-scroll.strategy';
 import { UI_CONSTANTS } from '../../../../core/constants/ui.constants';
@@ -14,7 +15,7 @@ import { ScrollNearBottomDirective } from '../../../../shared/directives/scroll-
 @Component({
   selector: 'app-users-list',
   standalone: true,
-  imports: [CommonModule, UserCardComponent, ScrollingModule, ScrollNearBottomDirective],
+  imports: [CommonModule, UserCardComponent, UsersToolbarComponent, ScrollingModule, ScrollNearBottomDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './users-list.component.html',
   styleUrl: './users-list.component.scss',
@@ -87,12 +88,6 @@ export class UsersListComponent implements OnInit, AfterViewInit {
 
   setCriteria(criteria: GroupingCriteria) {
     this.usersService.setGroupingCriteria(criteria);
-    this.scrollToTop();
-  }
-
-  onSearch(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.usersService.setSearchQuery(input.value);
     this.scrollToTop();
   }
 
