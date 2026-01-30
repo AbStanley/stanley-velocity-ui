@@ -2,7 +2,7 @@ import {
   CdkVirtualScrollViewport,
   VirtualScrollStrategy,
 } from '@angular/cdk/scrolling';
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, NgZone, inject } from '@angular/core';
 import { debounce, debounceTime, Subject } from 'rxjs';
 import { UI_CONSTANTS } from '../../core/constants/ui.constants';
 
@@ -26,6 +26,10 @@ export class FlexibleVirtualScrollStrategy
   private accumulatedOffsets: number[] = [0];
   private isMobile = false;
 
+  private resizeObserver: ResizeObserver | null = null;
+  private readonly ngZone = inject(NgZone);
+  private lastViewportSize = 0;
+
   constructor() {
     this.scrollSubject
       .pipe(debounceTime(16))
@@ -36,10 +40,24 @@ export class FlexibleVirtualScrollStrategy
     this.viewport = viewport;
     this.updateTotalSize();
     this.updateRenderedRange();
+
+    this.resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) {
+        this.ngZone.run(() => {
+          this.lastViewportSize = entry.contentRect.height;
+          this.updateRenderedRange();
+        });
+      }
+    });
+
+    this.resizeObserver.observe(viewport.elementRef.nativeElement);
   }
 
   detach() {
     this.scrolledIndexChange.complete();
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
     this.viewport = null;
     this.items = [];
     this.accumulatedOffsets = [0];
@@ -96,7 +114,7 @@ export class FlexibleVirtualScrollStrategy
 
     for (const item of this.items) {
       const height = item.type === 'header' ? headerSize : itemSize;
-      current += height;
+      current += height + UI_CONSTANTS.LIST_GAP;
       this.accumulatedOffsets.push(current);
     }
 
@@ -119,13 +137,19 @@ export class FlexibleVirtualScrollStrategy
     }
 
     const scrollOffset = Math.max(0, this.viewport.measureScrollOffset());
-    const viewportSize = this.viewport.getViewportSize();
+    const currentViewportSize = this.viewport.getViewportSize();
+
+    if (currentViewportSize > 0) {
+      this.lastViewportSize = currentViewportSize;
+    }
+
+    const effectiveViewportSize = this.lastViewportSize || currentViewportSize || window.innerHeight || 1000;
 
     const startPixel = Math.max(0, scrollOffset - UI_CONSTANTS.SCROLL_BUFFER);
-    const endPixel = scrollOffset + viewportSize + UI_CONSTANTS.SCROLL_BUFFER;
+    const endPixel = scrollOffset + effectiveViewportSize + UI_CONSTANTS.SCROLL_BUFFER;
 
     const start = this.findOffsetIndex(startPixel);
-    const end = Math.min(this.items.length, this.findOffsetIndex(endPixel) + 2);
+    const end = Math.min(this.items.length, this.findOffsetIndex(endPixel) + 4);
 
     this.viewport.setRenderedRange({ start, end });
     this.viewport.setRenderedContentOffset(this.accumulatedOffsets[start] || 0);
@@ -159,5 +183,6 @@ export class FlexibleVirtualScrollStrategy
 
   ngOnDestroy(): void {
     this.scrolledIndexChange.complete();
+    this.resizeObserver?.disconnect();
   }
 }

@@ -8,4 +8,5 @@ export const UI_CONSTANTS = {
     SCROLL_BUFFER: 400,
     MOBILE_BREAKPOINT: '(max-width: 810px)',
     SKELETON_COUNT: 10,
+    LIST_GAP: 12,
 };
