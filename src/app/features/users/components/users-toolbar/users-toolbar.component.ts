@@ -1,12 +1,8 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
   ChangeDetectionStrategy,
   input,
   output,
-  model,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GROUPING_CRITERIA, GroupingCriteria } from '../../models/user.model';
