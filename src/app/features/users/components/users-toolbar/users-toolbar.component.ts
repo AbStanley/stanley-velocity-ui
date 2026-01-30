@@ -1,9 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  input,
-  output,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GROUPING_CRITERIA, GroupingCriteria } from '../../models/user.model';
 
@@ -16,16 +11,16 @@ import { GROUPING_CRITERIA, GroupingCriteria } from '../../models/user.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersToolbarComponent {
-  criteriaOptions = GROUPING_CRITERIA;
+  protected readonly criteriaOptions = GROUPING_CRITERIA;
 
   searchQuery = input.required();
   currentCriteria = input.required<GroupingCriteria>();
   totalUsers = input.required();
 
-  search = output<string>();
-  groupingChange = output<GroupingCriteria>();
-  clearSearch = output<void>();
-  // In your class
+  protected readonly search = output<string>();
+  protected readonly groupingChange = output<GroupingCriteria>();
+  protected readonly clearSearch = output<void>();
+
   onSearch(event: Event) {
     const input = event.target as HTMLInputElement;
     this.search.emit(input.value);

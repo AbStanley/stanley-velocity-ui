@@ -15,7 +15,7 @@
     <!-- Loading State (Skeleton) -->
     @if (usersService.isLoading() && usersService.users().length === 0) {
     <div class="loading-state">
-        @for (i of [1,2,3,4,5,6]; track i) {
+        @for (i of skeletonItems; track i) {
         <div class="global-skeleton-card">
             <div class="skeleton-avatar"></div>
             <div class="skeleton-info">

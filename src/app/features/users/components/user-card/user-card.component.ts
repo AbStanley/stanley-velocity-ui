@@ -18,7 +18,7 @@ import { User } from '../../models/user.model';
 export class UserCardComponent {
   user = input.required<User>();
   expanded = input<boolean>(false);
-  toggle = output<void>();
+  protected toggle = output<void>();
 
   onToggle() {
     this.toggle.emit();

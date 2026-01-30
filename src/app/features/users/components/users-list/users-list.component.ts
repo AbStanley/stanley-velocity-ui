@@ -28,11 +28,12 @@ export class UsersListComponent implements OnInit, AfterViewInit {
   stateService = inject(UsersListStateService);
 
   // Public for template access
-  readonly UI = UI_CONSTANTS;
+  protected readonly UI = UI_CONSTANTS;
+  protected readonly skeletonItems = Array.from({ length: UI_CONSTANTS.SKELETON_COUNT }, (_, i) => i);
 
   // Type guards for template
-  readonly isHeader = isHeaderItem;
-  readonly isUser = isUserItem;
+  protected readonly isHeader = isHeaderItem;
+  protected readonly isUser = isUserItem;
 
   private breakpointObserver = inject(BreakpointObserver);
   private destroyRef = inject(DestroyRef);
