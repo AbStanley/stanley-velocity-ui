@@ -1,5 +1,12 @@
-
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+  input,
+  output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { User } from '../../models/user.model';
 
@@ -12,9 +19,9 @@ import { User } from '../../models/user.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserCardComponent {
-  @Input({ required: true }) user!: User;
-  @Input() expanded = false;
-  @Output() toggle = new EventEmitter<void>();
+  user = input.required<User>();
+  expanded = input<boolean>(false);
+  toggle = output<void>();
 
   onToggle() {
     this.toggle.emit();

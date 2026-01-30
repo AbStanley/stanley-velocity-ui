@@ -1,25 +1,26 @@
 <div class="toolbar">
     <div class="grouping-controls">
         <div class="search-box">
-            <input type="text" placeholder="Search users..." [value]="searchQuery" (input)="onSearch($event)">
-            @if (searchQuery) {
+            <input type="text" placeholder="Search users..." [value]="searchQuery()" (input)="onSearch($event)">
+            @if (searchQuery()) {
             <button class="clear-search" (click)="clearSearch.emit()">x</button>
             }
         </div>
 
         <span class="label-text">Group by</span>
         <div class="segment-control">
-            <button [class.active]="currentCriteria === 'all'" (click)="setCriteria('all')">All</button>
-            <button [class.active]="currentCriteria === 'alphabetical'"
-                (click)="setCriteria('alphabetical')">Alphabetical</button>
-            <button [class.active]="currentCriteria === 'age'" (click)="setCriteria('age')">Age</button>
-            <button [class.active]="currentCriteria === 'nationality'"
-                (click)="setCriteria('nationality')">Nationality</button>
+            <div class="segment-control">
+                @for (opt of criteriaOptions; track opt) {
+                <button [class.active]="currentCriteria() === opt" (click)="setCriteria(opt)">
+                    {{ opt | titlecase }}
+                </button>
+                }
+            </div>
         </div>
     </div>
 
     <div class="stats">
-        @if (totalUsers; as total) {
+        @if (totalUsers(); as total) {
         <span class="user-count">{{ total }} Users</span>
         }
     </div>

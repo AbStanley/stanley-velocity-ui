@@ -1,30 +1,41 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectionStrategy,
+  input,
+  output,
+  model,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GroupingCriteria } from '../../models/user.model';
+import { GROUPING_CRITERIA, GroupingCriteria } from '../../models/user.model';
 
 @Component({
-    selector: 'app-users-toolbar',
-    standalone: true,
-    imports: [CommonModule],
-    templateUrl: './users-toolbar.component.html',
-    styleUrl: './users-toolbar.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-users-toolbar',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './users-toolbar.component.html',
+  styleUrl: './users-toolbar.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersToolbarComponent {
-    @Input({ required: true }) searchQuery = '';
-    @Input({ required: true }) currentCriteria: GroupingCriteria = 'all';
-    @Input({ required: true }) totalUsers = 0;
+  criteriaOptions = GROUPING_CRITERIA;
 
-    @Output() search = new EventEmitter<string>();
-    @Output() groupingChange = new EventEmitter<GroupingCriteria>();
-    @Output() clearSearch = new EventEmitter<void>();
+  searchQuery = input.required();
+  currentCriteria = input.required<GroupingCriteria>();
+  totalUsers = input.required();
 
-    onSearch(event: Event) {
-        const input = event.target as HTMLInputElement;
-        this.search.emit(input.value);
-    }
+  search = output<string>();
+  groupingChange = output<GroupingCriteria>();
+  clearSearch = output<void>();
+  // In your class
+  onSearch(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.search.emit(input.value);
+  }
 
-    setCriteria(criteria: GroupingCriteria) {
-        this.groupingChange.emit(criteria);
-    }
+  setCriteria(criteria: GroupingCriteria) {
+    this.groupingChange.emit(criteria);
+  }
 }
