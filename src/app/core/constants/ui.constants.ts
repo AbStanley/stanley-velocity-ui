@@ -6,6 +6,6 @@ export const UI_CONSTANTS = {
     // More info FEATURE_DOCUMENTATION.md 
     ITEM_HEIGHT_EXPANDED_ADDITIONAL: 300,
     SCROLL_BUFFER: 400,
-    MOBILE_BREAKPOINT: '(max-width: 599px)',
+    MOBILE_BREAKPOINT: '(max-width: 810px)',
     SKELETON_COUNT: 10,
 };
