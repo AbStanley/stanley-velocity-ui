@@ -38,7 +38,7 @@ export function isUserItem(
 })
 export class UsersService {
   private readonly apiUrl = 'https://randomuser.me/api/';
-  private readonly PAGE_SIZE = 5;
+  private readonly PAGE_SIZE = 10;
 
   // State Signals
   private usersSignal = signal<User[]>([]);
@@ -73,8 +73,9 @@ export class UsersService {
 
     return users.filter((user) => {
       const fullName = `${user.name.first} ${user.name.last}`.toLowerCase();
-      // return fullName.includes(query) || user.email.toLowerCase().includes(query);
-      return terms.every((term) => fullName.includes(term));
+      const email = user.email.toLowerCase();
+
+      return terms.every((term) => fullName.includes(term) || email.includes(term));
     });
   });
 

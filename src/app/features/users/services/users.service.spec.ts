@@ -33,7 +33,7 @@ describe('UsersService', () => {
                 picture: { thumbnail: 'thumb.jpg' },
                 location: { city: 'Test City', country: 'Test Country' }
             }),
-            info: { seed: 'awork', results: 15, page: 1, version: '1.0' }
+            info: { seed: 'stanley', results: 15, page: 1, version: '1.0' }
         };
 
         it('should load initial users (page 1)', () => {

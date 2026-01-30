@@ -92,6 +92,11 @@ export class UsersListComponent implements OnInit, AfterViewInit {
     this.scrollToTop();
   }
 
+  onSearch(query: string) {
+    this.usersService.setSearchQuery(query);
+    this.scrollToTop();
+  }
+
   private scrollToTop() {
     setTimeout(() => {
       this.viewport?.scrollToIndex(0);

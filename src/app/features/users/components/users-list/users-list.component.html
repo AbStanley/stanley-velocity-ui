@@ -2,8 +2,8 @@
     <!-- Toolbar / Controls -->
     <!-- Toolbar -->
     <app-users-toolbar [searchQuery]="usersService.searchQuery()" [currentCriteria]="usersService.currentCriteria()"
-        [totalUsers]="usersService.users().length" (search)="usersService.setSearchQuery($event)"
-        (groupingChange)="setCriteria($event)" (clearSearch)="usersService.setSearchQuery('')">
+        [totalUsers]="usersService.users().length" (search)="onSearch($event)" (groupingChange)="setCriteria($event)"
+        (clearSearch)="onSearch('')">
     </app-users-toolbar>
 
     <div class="list-header">
