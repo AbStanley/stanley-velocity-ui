@@ -1,5 +1,16 @@
 # Velocity UI
 
+
+![Status](https://img.shields.io/badge/Status-Operational-success?style=for-the-badge)
+![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Enabled-2496ed?style=for-the-badge&logo=docker)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Architecture](https://img.shields.io/badge/Architecture-Clean-orange?style=for-the-badge)
+
+
+
+![Test Coverage](https://img.shields.io/badge/coverage-85%25-orange)
+
 Live: [Live Website](https://palegreen-mantis-363738.hostingersite.com/) 
 
 Hello! Welcome to **Velocity UI** ⚡.
