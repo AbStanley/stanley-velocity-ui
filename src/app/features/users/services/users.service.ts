@@ -38,7 +38,7 @@ export function isUserItem(
 })
 export class UsersService {
   private readonly apiUrl = 'https://randomuser.me/api/';
-  private readonly PAGE_SIZE = 20;
+  private readonly PAGE_SIZE = 5000;
 
   // State Signals
   private usersSignal = signal<User[]>([]);
