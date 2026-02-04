@@ -4,13 +4,27 @@
   height: 100%;
 
   header {
-    height: 200px;
+    height: 120px;
     text-align: center;
     box-sizing: border-box;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
+    padding: 1rem;
+    gap: 1rem;
+
+    img {
+      max-height: 100%;
+      height: auto;
+      width: auto;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
   }
 
   app-users-list {
@@ -20,7 +34,7 @@
 
   @media (max-width: 600px) {
     header {
-      height: 100px;
+      height: 80px;
     }
   }
 

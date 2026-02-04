@@ -1,8 +1,8 @@
-# Awork Challenge
+# Velocity UI
 
 Live: [Live Website](https://palegreen-kudu-487686.hostingersite.com/) 
 
-Hello! Welcome to the awork challenge 🤩.
+Hello! Welcome to **Velocity UI** ⚡.
 
 This project represents a user management interface built with Angular 20, demonstrating modern reactive patterns using Signals, high-performance DOM updates, and efficient heavy computation handling.
 

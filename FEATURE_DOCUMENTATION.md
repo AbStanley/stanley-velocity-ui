@@ -1,6 +1,6 @@
 # User Management – Design & Rationale
 
-This document explains **what the User Visualizer does**, **how it works**, and most importantly: **why certain technical decisions were made**. It’s written to be understandable whether you’re skimming at a high level or digging into implementation details.
+This document explains **what Velocity UI does**, **how it works**, and most importantly: **why certain technical decisions were made**. It’s written to be understandable whether you’re skimming at a high level or digging into implementation details.
 
 The goal of this feature is simple: **make it easy and fast to explore a large list of users without the UI ever feeling slow or fragile**.
 
@@ -8,7 +8,7 @@ The goal of this feature is simple: **make it easy and fast to explore a large l
 
 ## 1. What This Feature Does (Big Picture)
 
-The User Visualizer application allows users to:
+The **Velocity UI** application allows users to:
 
 * Browse **thousands of user records** smoothly
 * Scroll endlessly without manual pagination

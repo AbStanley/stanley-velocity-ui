@@ -5611,7 +5611,7 @@ export const MockResult: MockedResult = {
     }
   ],
   "info": {
-    "seed": "awork",
+    "seed": "velocity-ui",
     "results": 100,
     "page": 1
   }
